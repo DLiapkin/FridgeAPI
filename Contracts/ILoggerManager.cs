@@ -1,4 +1,4 @@
-﻿namespace Contacts
+﻿namespace Contracts
 {
     public interface ILoggerManager
     {

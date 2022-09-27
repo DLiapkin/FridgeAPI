@@ -1,4 +1,4 @@
-﻿using Contacts;
+﻿using Contracts;
 using FridgeAPI.Repositories;
 using LoggerService;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +21,11 @@ namespace FridgeAPI.Extensions
                 opts.UseSqlServer(configuration.GetConnectionString("sqlConnection"));
                 opts.UseLazyLoadingProxies();
             });
+        }
+
+        public static void ConfigureRepositoryManager(this IServiceCollection services)
+        { 
+            services.AddScoped<IRepositoryManager, RepositoryManager>(); 
         }
     }   
 }
