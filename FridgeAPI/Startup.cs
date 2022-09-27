@@ -30,8 +30,9 @@ namespace FridgeAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.ConfigureLoggerService();
+            services.ConfigureSqlContext(Configuration);
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FridgeAPI", Version = "v1" });
