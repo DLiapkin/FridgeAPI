@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using Contracts;
 using Microsoft.EntityFrameworkCore;
 
-namespace FridgeAPI.Repositories
+namespace Repositories
 {
     public abstract class RepositoryBase<T> : IRepository<T> where T : class
     {

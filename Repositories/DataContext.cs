@@ -1,7 +1,7 @@
-﻿using FridgeAPI.Models;
+﻿using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FridgeAPI.Repositories
+namespace Repositories
 {
     public class DataContext : DbContext
     {

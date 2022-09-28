@@ -1,6 +1,6 @@
 ﻿using Contracts;
 
-namespace FridgeAPI.Repositories
+namespace Repositories
 {
     public class RepositoryManager : IRepositoryManager
     {

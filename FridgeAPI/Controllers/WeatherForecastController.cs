@@ -1,5 +1,4 @@
-﻿using FridgeAPI.Repositories;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -18,18 +17,15 @@ namespace FridgeAPI.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly DataContext _context;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, DataContext context)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
-            _context = context;
         }
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            _ = _context.ContextId;
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

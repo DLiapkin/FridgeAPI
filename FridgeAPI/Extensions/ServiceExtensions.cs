@@ -1,5 +1,5 @@
 ﻿using Contracts;
-using FridgeAPI.Repositories;
+using Repositories;
 using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

@@ -1,7 +1,7 @@
 ﻿using Contracts;
-using FridgeAPI.Models;
+using Entities.Models;
 
-namespace FridgeAPI.Repositories
+namespace Repositories
 {
     public class FridgeProductRepository : RepositoryBase<FridgeProduct>, IFridgeProductRepository
     {
