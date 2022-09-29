@@ -9,6 +9,7 @@ namespace FridgeAPI.Extensions
         public MapperProfile()
         {
             CreateMap<Fridge, FridgeDto>();
+            CreateMap<FridgeToCreateDto, Fridge>();
         }
     }
 }

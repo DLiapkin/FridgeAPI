@@ -46,9 +46,17 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridge = _repository.Fridge.GetFridge(id, trackChanges: true);
-                var fridgeDto = _mapper.Map<FridgeDto>(fridge);
-                return Ok(fridgeDto);
+                var fridge = _repository.Fridge.GetFridge(id, trackChanges: false);
+                if (fridge == null)
+                {
+                    _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
+                    return NotFound();
+                }
+                else
+                {
+                    var fridgeDto = _mapper.Map<FridgeDto>(fridge);
+                    return Ok(fridgeDto);
+                }
             }
             catch (Exception ex)
             {
@@ -58,12 +66,22 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateFridge([FromBody] Fridge fridge)
+        public IActionResult CreateFridge([FromBody] FridgeToCreateDto fridgeDto)
         {
             try
             {
-                _repository.Fridge.CreateFridge(fridge);
-                return Ok();
+                if(fridgeDto == null)
+                {
+                    _logger.LogError("FridgeToCreateDto object sent from client is null.");
+                    return BadRequest("FridgeToCreateDto is null");
+                }
+                else
+                {
+                    Fridge fridge = _mapper.Map<Fridge>(fridgeDto);
+                    _repository.Fridge.CreateFridge(fridge);
+                    _repository.Save();
+                    return Ok();
+                }
             }
             catch (Exception ex)
             {
