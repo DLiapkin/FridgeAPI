@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
 using Contracts;
 using Entities.Models;
+using Entities.DataTransferObjects;
 
 namespace FridgeAPI.Controllers
 {
@@ -13,11 +16,13 @@ namespace FridgeAPI.Controllers
     {
         private readonly ILogger<FridgeController> _logger;
         private readonly IRepositoryManager _repository;
+        private readonly IMapper _mapper;
 
-        public FridgeController(ILogger<FridgeController> logger, IRepositoryManager repositoryManager)
+        public FridgeController(ILogger<FridgeController> logger, IRepositoryManager repositoryManager, IMapper mapper)
         {
             _logger = logger;
             _repository = repositoryManager;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -26,7 +31,8 @@ namespace FridgeAPI.Controllers
             try
             {
                 var fridges = _repository.Fridge.GetAllFridges(trackChanges: true);
-                return Ok(fridges);
+                var fridgesDto = _mapper.Map<IEnumerable<FridgeDto>>(fridges);
+                return Ok(fridgesDto);
             }
             catch (Exception ex)
             {
@@ -41,7 +47,8 @@ namespace FridgeAPI.Controllers
             try
             {
                 var fridge = _repository.Fridge.GetFridge(id, trackChanges: true);
-                return Ok(fridge);
+                var fridgeDto = _mapper.Map<FridgeDto>(fridge);
+                return Ok(fridgeDto);
             }
             catch (Exception ex)
             {

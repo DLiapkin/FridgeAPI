@@ -34,6 +34,7 @@ namespace FridgeAPI
             services.ConfigureLoggerService();
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers().AddJsonOptions(o =>
             {
                 o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
