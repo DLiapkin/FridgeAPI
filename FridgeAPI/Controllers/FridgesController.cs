@@ -7,18 +7,19 @@ using AutoMapper;
 using Contracts;
 using Entities.Models;
 using Entities.DataTransferObjects;
+using System.Linq;
 
 namespace FridgeAPI.Controllers
 {
     [Route("api/fridges")]
     [ApiController]
-    public class FridgeController : ControllerBase
+    public class FridgesController : ControllerBase
     {
-        private readonly ILogger<FridgeController> _logger;
+        private readonly ILogger<FridgesController> _logger;
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
 
-        public FridgeController(ILogger<FridgeController> logger, IRepositoryManager repositoryManager, IMapper mapper)
+        public FridgesController(ILogger<FridgesController> logger, IRepositoryManager repositoryManager, IMapper mapper)
         {
             _logger = logger;
             _repository = repositoryManager;
@@ -65,12 +66,39 @@ namespace FridgeAPI.Controllers
             }
         }
 
+        [HttpGet("{fridgeId}/products")]
+        public IActionResult GetFridgeProductsById(Guid fridgeId)
+        {
+            try
+            {
+                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: false);
+                if (fridge == null)
+                {
+                    _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
+                    return NotFound();
+                }
+                var products = fridge.Products.ToList();
+                if (!products.Any())
+                {
+                    _logger.LogInformation($"There isn't any products in fridge with id: {fridgeId}.");
+                    return NotFound();
+                }
+                var productsDto = _mapper.Map<IEnumerable<FridgeDto>>(products);
+                return Ok(productsDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(GetFridgeProductsById)} action {ex}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
         [HttpPost]
         public IActionResult CreateFridge([FromBody] FridgeToCreateDto fridgeDto)
         {
             try
             {
-                if(fridgeDto == null)
+                if (fridgeDto == null)
                 {
                     _logger.LogError("FridgeToCreateDto object sent from client is null.");
                     return BadRequest("FridgeToCreateDto is null");

@@ -12,13 +12,13 @@ namespace FridgeAPI.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        private readonly ILogger<ProductController> _logger;
+        private readonly ILogger<ProductsController> _logger;
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
 
-        public ProductController(ILogger<ProductController> logger, IRepositoryManager repositoryManager, IMapper mapper)
+        public ProductsController(ILogger<ProductsController> logger, IRepositoryManager repositoryManager, IMapper mapper)
         {
             _logger = logger;
             _repository = repositoryManager;
