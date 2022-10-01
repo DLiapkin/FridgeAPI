@@ -11,6 +11,10 @@ namespace FridgeAPI.Extensions
             CreateMap<Fridge, FridgeDto>();
             CreateMap<FridgeToCreateDto, Fridge>();
             CreateMap<FridgeToUpdateDto, Fridge>();
+
+            CreateMap<Product, ProductDto>();
+            CreateMap<FridgeToCreateDto, Fridge>();
+            CreateMap<FridgeToUpdateDto, Fridge>();
         }
     }
 }
