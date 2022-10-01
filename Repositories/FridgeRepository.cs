@@ -18,9 +18,9 @@ namespace Repositories
             return FindAll(trackChanges).OrderBy(c => c.Name).ToList();
         } 
 
-        public IEnumerable<Fridge> GetFridge(Guid id, bool trackChanges)
+        public Fridge GetFridge(Guid id, bool trackChanges)
         {
-            return FindByCondition((Fridge fr) => fr.Id == id, trackChanges);
+            return FindByCondition((Fridge fr) => fr.Id == id, trackChanges).FirstOrDefault();
         }
 
         public void CreateFridge(Fridge fridge)

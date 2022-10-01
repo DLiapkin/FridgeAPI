@@ -89,5 +89,55 @@ namespace FridgeAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateFridge(Guid id, [FromBody] FridgeToUpdateDto fridge)
+        {
+            try 
+            {
+                if (fridge == null)
+                {
+                    _logger.LogError("fridgeToUpdateDto object sent from client is null.");
+                    return BadRequest("fridgeToUpdateDto object is null");
+                }
+                var fridgeEntity = _repository.Fridge.GetFridge(id, trackChanges: false);
+                if (fridgeEntity == null)
+                {
+                    _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
+                    return NotFound();
+                }
+                _mapper.Map(fridge, fridgeEntity);
+                _repository.Fridge.UpdateFridge(fridgeEntity);
+                _repository.Save();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(UpdateFridge)} action {ex}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteFridge(Guid id)
+        {
+            try 
+            {
+                var fridge = _repository.Fridge.GetFridge(id, trackChanges: false);
+                if (fridge == null)
+                {
+                    _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
+                    return NotFound();
+                }
+                _repository.Fridge.DeleteFridge(fridge);
+                _repository.Save();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(DeleteFridge)} action {ex}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }

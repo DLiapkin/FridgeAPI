@@ -10,6 +10,7 @@ namespace FridgeAPI.Extensions
         {
             CreateMap<Fridge, FridgeDto>();
             CreateMap<FridgeToCreateDto, Fridge>();
+            CreateMap<FridgeToUpdateDto, Fridge>();
         }
     }
 }
