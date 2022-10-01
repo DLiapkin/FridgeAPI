@@ -66,33 +66,6 @@ namespace FridgeAPI.Controllers
             }
         }
 
-        [HttpGet("{fridgeId}/products")]
-        public IActionResult GetFridgeProductsById(Guid fridgeId)
-        {
-            try
-            {
-                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: false);
-                if (fridge == null)
-                {
-                    _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
-                    return NotFound();
-                }
-                var products = fridge.Products.ToList();
-                if (!products.Any())
-                {
-                    _logger.LogInformation($"There isn't any products in fridge with id: {fridgeId}.");
-                    return NotFound();
-                }
-                var productsDto = _mapper.Map<IEnumerable<FridgeDto>>(products);
-                return Ok(productsDto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Something went wrong in the {nameof(GetFridgeProductsById)} action {ex}");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
         [HttpPost]
         public IActionResult CreateFridge([FromBody] FridgeToCreateDto fridgeDto)
         {
@@ -164,6 +137,85 @@ namespace FridgeAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Something went wrong in the {nameof(DeleteFridge)} action {ex}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("{fridgeId}/products")]
+        public IActionResult GetFridgeProductsById(Guid fridgeId)
+        {
+            try
+            {
+                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: false);
+                if (fridge == null)
+                {
+                    _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
+                    return NotFound();
+                }
+                var products = fridge.Products.ToList();
+                if (!products.Any())
+                {
+                    _logger.LogInformation($"There isn't any products in fridge with id: {fridgeId}.");
+                    return NotFound();
+                }
+                var productsDto = _mapper.Map<IEnumerable<FridgeDto>>(products);
+                return Ok(productsDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(GetFridgeProductsById)} action {ex}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPost("{fridgeId}/products")]
+        public IActionResult CreateProductForFridge(Guid fridgeId, [FromBody] FridgeProductToCreateDto productDto)
+        {
+            try
+            {
+                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: false);
+                if (fridge == null)
+                {
+                    _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
+                    return NotFound();
+                }
+                var product = _mapper.Map<FridgeProduct>(productDto);
+                product.FridgeId = fridgeId;
+                _repository.FridgeProduct.CreateFridgeProduct(product);
+                _repository.Save();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(CreateProductForFridge)} action {ex}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{fridgeId}/products/{fridgeProductId}")]
+        public IActionResult DeleteProductInFridge(Guid fridgeId, Guid fridgeProductId)
+        {
+            try
+            {
+                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: false);
+                if (fridge == null)
+                {
+                    _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
+                    return NotFound();
+                }
+                var product = _repository.FridgeProduct.GetFridgeProduct(fridgeProductId, trackChanges: false);
+                if (product == null)
+                {
+                    _logger.LogInformation($"There is no such a product with id: {fridgeProductId}.");
+                    return NotFound();
+                }
+                _repository.FridgeProduct.CreateFridgeProduct(product);
+                _repository.Save();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(DeleteProductInFridge)} action {ex}");
                 return StatusCode(500, "Internal server error");
             }
         }
