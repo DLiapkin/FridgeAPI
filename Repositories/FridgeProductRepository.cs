@@ -3,6 +3,7 @@ using Entities.Models;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repositories
 {
@@ -36,6 +37,11 @@ namespace Repositories
         public void DeleteFridgeProduct(FridgeProduct fridgeProduct)
         {
             Delete(fridgeProduct);
+        }
+
+        public void ExcecuteProcedure(string query)
+        {
+            Context.Database.ExecuteSqlRaw(query);
         }
     }
 }

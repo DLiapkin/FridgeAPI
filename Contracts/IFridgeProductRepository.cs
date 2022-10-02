@@ -11,5 +11,6 @@ namespace Contracts
         void CreateFridgeProduct(FridgeProduct fridgeProduct);
         void UpdateFridgeProduct(FridgeProduct fridgeProduct);
         void DeleteFridgeProduct(FridgeProduct fridgeProduct);
+        void ExcecuteProcedure(string query);
     }
 }

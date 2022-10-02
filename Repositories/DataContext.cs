@@ -11,9 +11,9 @@ namespace Repositories
             Database.EnsureCreated();
         }
 
-        DbSet<FridgeModel> FridgeModels { get; set; }
-        DbSet<Fridge> Fridges { get; set; }
-        DbSet<FridgeProduct> FridgeProducts { get; set; }
-        DbSet<Product> Products { get; set; }
+        public DbSet<FridgeModel> FridgeModels { get; set; }
+        public DbSet<Fridge> Fridges { get; set; }
+        public DbSet<FridgeProduct> FridgeProducts { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }

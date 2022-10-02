@@ -234,5 +234,21 @@ namespace FridgeAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpGet("refresh-product")]
+        public IActionResult RefreshProduct()
+        {
+            try
+            {
+                string StoredProc = "EXEC usp_ReplenishProduct";
+                _repository.FridgeProduct.ExcecuteProcedure(StoredProc);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(GetFridgeProductsById)} action {ex}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }
