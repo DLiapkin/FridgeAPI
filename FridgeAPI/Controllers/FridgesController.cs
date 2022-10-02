@@ -78,6 +78,11 @@ namespace FridgeAPI.Controllers
                 }
                 else
                 {
+                    if (!ModelState.IsValid)
+                    {
+                        _logger.LogError("Invalid model state for the ProductToCreateDto object");
+                        return UnprocessableEntity(ModelState);
+                    }
                     Fridge fridge = _mapper.Map<Fridge>(fridgeDto);
                     _repository.Fridge.CreateFridge(fridge);
                     _repository.Save();
@@ -106,6 +111,11 @@ namespace FridgeAPI.Controllers
                 {
                     _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
                     return NotFound();
+                }
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError("Invalid model state for the ProductToCreateDto object");
+                    return UnprocessableEntity(ModelState);
                 }
                 _mapper.Map(fridge, fridgeEntity);
                 _repository.Fridge.UpdateFridge(fridgeEntity);
@@ -178,6 +188,11 @@ namespace FridgeAPI.Controllers
                 {
                     _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
                     return NotFound();
+                }
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError("Invalid model state for the ProductToCreateDto object");
+                    return UnprocessableEntity(ModelState);
                 }
                 var product = _mapper.Map<FridgeProduct>(productDto);
                 product.FridgeId = fridgeId;

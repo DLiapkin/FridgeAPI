@@ -40,6 +40,10 @@ namespace FridgeAPI
                 o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
                 o.JsonSerializerOptions.MaxDepth = 0;
             });
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FridgeAPI", Version = "v1" });
