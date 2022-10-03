@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+
 namespace FridgeAPI.UnitTests
 {
     public class ProductsControllerTests
@@ -64,7 +65,7 @@ namespace FridgeAPI.UnitTests
         }
 
         [Fact]
-        public void GetProductById_ExistingId_ReturnsRightproduct()
+        public void GetProductById_ExistingId_ReturnsRightProduct()
         {
             // Arrange
             Product expected = CreateRandomProduct();

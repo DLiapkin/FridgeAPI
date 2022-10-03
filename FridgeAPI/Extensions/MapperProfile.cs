@@ -20,6 +20,10 @@ namespace FridgeAPI.Extensions
                 .ForMember(fm => fm.ProductName,
                 opt => opt.MapFrom(x => x.Product.Name));
             CreateMap<FridgeProductToCreateDto, FridgeProduct>();
+
+            CreateMap<FridgeModel, FridgeModelDto>();
+            CreateMap<FridgeModelToCreateDto, FridgeModel>();
+            CreateMap<FridgeModelToUpdateDto, FridgeModel>();
         }
     }
 }
