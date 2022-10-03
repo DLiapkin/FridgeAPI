@@ -169,7 +169,7 @@ namespace FridgeAPI.Controllers
                     _logger.LogInformation($"There isn't any products in fridge with id: {fridgeId}.");
                     return NotFound();
                 }
-                var productsDto = _mapper.Map<IEnumerable<FridgeDto>>(products);
+                var productsDto = _mapper.Map<IEnumerable<FridgeProductDto>>(products);
                 return Ok(productsDto);
             }
             catch (Exception ex)
@@ -180,7 +180,7 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPost("{fridgeId}/products")]
-        public IActionResult CreateProductForFridge(Guid fridgeId, [FromBody] FridgeProductToCreateDto productDto)
+        public IActionResult CreateProductForFridge(Guid fridgeId, [FromBody] FridgeProductToCreateDto productToCreateDto)
         {
             try
             {
@@ -190,12 +190,17 @@ namespace FridgeAPI.Controllers
                     _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
                     return NotFound();
                 }
+                if (productToCreateDto == null)
+                {
+                    _logger.LogError("ProductToCreateDto object sent from client is null.");
+                    return BadRequest("ProductToCreateDto is null");
+                }
                 if (!ModelState.IsValid)
                 {
                     _logger.LogError("Invalid model state for the ProductToCreateDto object");
                     return UnprocessableEntity(ModelState);
                 }
-                var product = _mapper.Map<FridgeProduct>(productDto);
+                var product = _mapper.Map<FridgeProduct>(productToCreateDto);
                 product.FridgeId = fridgeId;
                 _repository.FridgeProduct.CreateFridgeProduct(product);
                 _repository.Save();
