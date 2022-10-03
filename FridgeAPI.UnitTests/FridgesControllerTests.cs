@@ -26,7 +26,7 @@ namespace FridgeAPI.UnitTests
             loggerStub = new Mock<ILogger<FridgesController>>();
             mapperStub = new Mock<IMapper>();
             controller = new FridgesController(loggerStub.Object, repositoryStub.Object, mapperStub.Object);
-    }
+        }
 
         [Fact]
         public void GetFridgeById_UnknownId_ReturnsNotFound()
