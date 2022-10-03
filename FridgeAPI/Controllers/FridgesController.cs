@@ -86,7 +86,8 @@ namespace FridgeAPI.Controllers
                     Fridge fridge = _mapper.Map<Fridge>(fridgeDto);
                     _repository.Fridge.CreateFridge(fridge);
                     _repository.Save();
-                    return Ok();
+                    var fridgeToReturn = _mapper.Map<FridgeDto>(fridge);
+                    return CreatedAtRoute(nameof(CreateFridge), new { id = fridgeToReturn.Id }, fridgeToReturn);
                 }
             }
             catch (Exception ex)
@@ -198,7 +199,9 @@ namespace FridgeAPI.Controllers
                 product.FridgeId = fridgeId;
                 _repository.FridgeProduct.CreateFridgeProduct(product);
                 _repository.Save();
-                return NoContent();
+                var productToReturn = _mapper.Map<FridgeProductDto>(product);
+                return CreatedAtRoute(nameof(CreateProductForFridge), 
+                    new { fridgeId = fridgeId, id = productToReturn.Id }, productToReturn);
             }
             catch (Exception ex)
             {
