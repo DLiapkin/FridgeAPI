@@ -35,11 +35,7 @@ namespace FridgeAPI
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
             services.AddAutoMapper(typeof(Startup));
-            services.AddControllers().AddJsonOptions(o =>
-            {
-                o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-                o.JsonSerializerOptions.MaxDepth = 0;
-            });
+            services.AddControllers();
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;

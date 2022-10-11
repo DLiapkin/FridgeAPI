@@ -30,7 +30,7 @@ namespace Repositories
 
         public void UpdateFridge(Fridge fridge)
         {
-            Create(fridge);
+            Update(fridge);
         }
 
         public void DeleteFridge(Fridge fridge)

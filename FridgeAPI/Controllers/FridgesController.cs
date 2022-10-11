@@ -157,7 +157,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: false);
+                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: true);
                 if (fridge == null)
                 {
                     _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
@@ -184,7 +184,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: false);
+                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: true);
                 if (fridge == null)
                 {
                     _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
@@ -220,7 +220,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: false);
+                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: true);
                 if (fridge == null)
                 {
                     _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
