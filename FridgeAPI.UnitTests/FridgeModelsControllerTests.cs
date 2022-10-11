@@ -149,7 +149,7 @@ namespace FridgeAPI.UnitTests
             var result = controller.CreateFridgeModel(FridgeModelToCreate);
 
             // Assert
-            FridgeModelDto createdFridgeModel = (result as CreatedAtRouteResult).Value as FridgeModelDto;
+            FridgeModelDto createdFridgeModel = (result as CreatedAtActionResult).Value as FridgeModelDto;
             Assert.Equal(fridgeModelDto, createdFridgeModel);
             Assert.NotEqual(createdFridgeModel.Id, Guid.Empty);
         }

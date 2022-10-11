@@ -87,7 +87,7 @@ namespace FridgeAPI.Controllers
                     _repository.Fridge.CreateFridge(fridge);
                     _repository.Save();
                     var fridgeToReturn = _mapper.Map<FridgeDto>(fridge);
-                    return CreatedAtRoute(nameof(CreateFridge), new { id = fridgeToReturn.Id }, fridgeToReturn);
+                    return CreatedAtAction(nameof(CreateFridge), new { id = fridgeToReturn.Id }, fridgeToReturn);
                 }
             }
             catch (Exception ex)
@@ -104,8 +104,8 @@ namespace FridgeAPI.Controllers
             {
                 if (fridge == null)
                 {
-                    _logger.LogError("fridgeToUpdateDto object sent from client is null.");
-                    return BadRequest("fridgeToUpdateDto object is null");
+                    _logger.LogError("FridgeToUpdateDto object sent from client is null.");
+                    return BadRequest("FridgeToUpdateDto object is null");
                 }
                 var fridgeEntity = _repository.Fridge.GetFridge(id, trackChanges: false);
                 if (fridgeEntity == null)
@@ -205,7 +205,7 @@ namespace FridgeAPI.Controllers
                 _repository.FridgeProduct.CreateFridgeProduct(product);
                 _repository.Save();
                 var productToReturn = _mapper.Map<FridgeProductDto>(product);
-                return CreatedAtRoute(nameof(CreateProductForFridge), 
+                return CreatedAtAction(nameof(CreateProductForFridge), 
                     new { fridgeId = fridgeId, id = productToReturn.Id }, productToReturn);
             }
             catch (Exception ex)
@@ -232,7 +232,7 @@ namespace FridgeAPI.Controllers
                     _logger.LogInformation($"There is no such a product with id: {fridgeProductId}.");
                     return NotFound();
                 }
-                _repository.FridgeProduct.CreateFridgeProduct(product);
+                _repository.FridgeProduct.DeleteFridgeProduct(product);
                 _repository.Save();
                 return NoContent();
             }
@@ -254,7 +254,7 @@ namespace FridgeAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong in the {nameof(GetFridgeProductsById)} action {ex}");
+                _logger.LogError($"Something went wrong in the {nameof(RefreshProduct)} action {ex}");
                 return StatusCode(500, "Internal server error");
             }
         }

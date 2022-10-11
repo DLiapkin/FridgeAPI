@@ -86,7 +86,7 @@ namespace FridgeAPI.Controllers
                     _repository.Product.CreateProduct(product);
                     _repository.Save();
                     var productToReturn = _mapper.Map<ProductDto>(product);
-                    return CreatedAtRoute(nameof(CreateProduct), new { id = productToReturn.Id }, productToReturn);
+                    return CreatedAtAction(nameof(CreateProduct), new { id = productToReturn.Id }, productToReturn);
                 }
             }
             catch (Exception ex)

@@ -131,7 +131,7 @@ namespace FridgeAPI.UnitTests
             var result = controller.CreateFridge(fridgeToCreate);
 
             // Assert
-            FridgeDto createdFridge = (result as CreatedAtRouteResult).Value as FridgeDto;
+            FridgeDto createdFridge = (result as CreatedAtActionResult).Value as FridgeDto;
             Assert.Equal(fridgeDto, createdFridge);
             Assert.NotEqual(createdFridge.Id, Guid.Empty);
         }
@@ -344,7 +344,7 @@ namespace FridgeAPI.UnitTests
             var result = controller.CreateProductForFridge(It.IsAny<Guid>(), productToCreate);
 
             // Assert
-            FridgeProductDto createdProduct = (result as CreatedAtRouteResult).Value as FridgeProductDto;
+            FridgeProductDto createdProduct = (result as CreatedAtActionResult).Value as FridgeProductDto;
             Assert.Equal(productDto, createdProduct);
             Assert.NotEqual(createdProduct.Id, Guid.Empty);
         }
