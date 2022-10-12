@@ -18,7 +18,8 @@ namespace FridgeAPI.Extensions
         {
             services.AddDbContext<DataContext>(opts => 
             {
-                opts.UseSqlServer(configuration.GetConnectionString("sqlConnection"));
+                opts.UseSqlServer(configuration.GetConnectionString("sqlConnection"), 
+                    b => b.MigrationsAssembly("FridgeAPI"));
                 opts.UseLazyLoadingProxies();
             });
         }
