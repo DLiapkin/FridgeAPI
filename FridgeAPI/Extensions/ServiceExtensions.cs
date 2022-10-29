@@ -26,7 +26,11 @@ namespace FridgeAPI.Extensions
 
         public static void ConfigureRepositoryManager(this IServiceCollection services)
         { 
-            services.AddScoped<IUnitOfWork, UnitOfWork>(); 
+            services.AddScoped<IFridgeRepository, FridgeRepository>();
+            services.AddScoped<IFridgeModelRepository, FridgeModelRepository>();
+            services.AddScoped<IFridgeProductRepository, FridgeProductRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }   
 }

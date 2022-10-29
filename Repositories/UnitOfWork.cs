@@ -10,17 +10,20 @@ namespace Repositories
         private IFridgeProductRepository _fridgeProductRepository;
         private IProductRepository _productRepository;
 
-        public UnitOfWork(DataContext repositoryContext)
+        public UnitOfWork(DataContext repositoryContext, IFridgeModelRepository fridgeModelRepository,
+            IFridgeRepository fridgeRepository, IFridgeProductRepository fridgeProductRepository, IProductRepository productRepository)
         {
             _repositoryContext = repositoryContext;
+            _fridgeModelRepository = fridgeModelRepository;
+            _fridgeRepository = fridgeRepository;
+            _fridgeProductRepository = fridgeProductRepository;
+            _productRepository = productRepository;
         }
 
         public IFridgeModelRepository FridgeModel
         {
             get
             {
-                if (_fridgeModelRepository == null)
-                    _fridgeModelRepository = new FridgeModelRepository(_repositoryContext);
                 return _fridgeModelRepository;
             }
         }
@@ -29,8 +32,6 @@ namespace Repositories
         {
             get
             {
-                if (_fridgeRepository == null)
-                    _fridgeRepository = new FridgeRepository(_repositoryContext);
                 return _fridgeRepository;
             }
         }
@@ -39,8 +40,6 @@ namespace Repositories
         {
             get
             {
-                if (_fridgeProductRepository == null)
-                    _fridgeProductRepository = new FridgeProductRepository(_repositoryContext);
                 return _fridgeProductRepository;
             }
         }
@@ -49,8 +48,6 @@ namespace Repositories
         {
             get
             {
-                if (_productRepository == null)
-                    _productRepository = new ProductRepository(_repositoryContext);
                 return _productRepository;
             }
         }
