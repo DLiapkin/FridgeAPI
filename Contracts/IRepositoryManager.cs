@@ -1,6 +1,6 @@
 ﻿namespace Contracts
 {
-    public interface IRepositoryManager
+    public interface IUnitOfWork
     {
         IFridgeModelRepository FridgeModel { get; }
         IFridgeRepository Fridge { get; }

@@ -2,7 +2,7 @@
 
 namespace Repositories
 {
-    public class RepositoryManager : IRepositoryManager
+    public class UnitOfWork : IUnitOfWork
     {
         private DataContext _repositoryContext;
         private IFridgeModelRepository _fridgeModelRepository;
@@ -10,7 +10,7 @@ namespace Repositories
         private IFridgeProductRepository _fridgeProductRepository;
         private IProductRepository _productRepository;
 
-        public RepositoryManager(DataContext repositoryContext)
+        public UnitOfWork(DataContext repositoryContext)
         {
             _repositoryContext = repositoryContext;
         }

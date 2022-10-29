@@ -16,10 +16,10 @@ namespace FridgeAPI.Controllers
     public class FridgesController : ControllerBase
     {
         private readonly ILogger<FridgesController> _logger;
-        private readonly IRepositoryManager _repository;
+        private readonly IUnitOfWork _repository;
         private readonly IMapper _mapper;
 
-        public FridgesController(ILogger<FridgesController> logger, IRepositoryManager repositoryManager, IMapper mapper)
+        public FridgesController(ILogger<FridgesController> logger, IUnitOfWork repositoryManager, IMapper mapper)
         {
             _logger = logger;
             _repository = repositoryManager;

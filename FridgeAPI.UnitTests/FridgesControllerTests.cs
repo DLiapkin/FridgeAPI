@@ -15,14 +15,14 @@ namespace FridgeAPI.UnitTests
 {
     public class FridgesControllerTests
     {
-        private readonly Mock<IRepositoryManager> repositoryStub;
+        private readonly Mock<IUnitOfWork> repositoryStub;
         private readonly Mock<ILogger<FridgesController>> loggerStub;
         private readonly Mock<IMapper> mapperStub;
         private readonly FridgesController controller;
 
         public FridgesControllerTests()
         {
-            repositoryStub = new Mock<IRepositoryManager>();
+            repositoryStub = new Mock<IUnitOfWork>();
             loggerStub = new Mock<ILogger<FridgesController>>();
             mapperStub = new Mock<IMapper>();
             controller = new FridgesController(loggerStub.Object, repositoryStub.Object, mapperStub.Object);
