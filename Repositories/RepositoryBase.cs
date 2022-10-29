@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Contracts;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repositories
 {
-    public abstract class RepositoryBase<T> : IRepository<T> where T : class
+    public abstract class RepositoryBase<T> : IRepository<T> where T : BaseEntity
     {
         protected DataContext Context;
 
@@ -15,14 +16,14 @@ namespace Repositories
             Context = repositoryContext;
         }
 
-        public IQueryable<T> FindAll(bool trackChanges)
+        public IEnumerable<T> FindAll(bool trackChanges)
         {
             return !trackChanges ? Context.Set<T>().AsNoTracking() : Context.Set<T>();
         }
 
-        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges)
+        public T FindById(Guid id, bool trackChanges)
         {
-            return !trackChanges ? Context.Set<T>().Where(expression).AsNoTracking() : Context.Set<T>().Where(expression);
+            return !trackChanges ? Context.Set<T>().AsNoTracking().FirstOrDefault(e => e.Id == id) : Context.Set<T>().FirstOrDefault(e => e.Id == id);
         }
 
         public void Create(T entity) 

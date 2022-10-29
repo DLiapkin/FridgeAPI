@@ -26,7 +26,7 @@ namespace Repositories
 
         public FridgeProduct GetFridgeProduct(Guid id, bool trackChanges)
         {
-            return FindByCondition((FridgeProduct f) => f.Id == id, trackChanges).FirstOrDefault();
+            return FindById(id, trackChanges);
         }
 
         public void UpdateFridgeProduct(FridgeProduct fridgeProduct)

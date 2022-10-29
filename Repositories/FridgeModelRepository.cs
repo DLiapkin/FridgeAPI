@@ -20,7 +20,7 @@ namespace Repositories
 
         public FridgeModel GetFridgeModel(Guid id, bool trackChanges)
         {
-            return FindByCondition((FridgeModel fm) => fm.Id == id, trackChanges).FirstOrDefault();
+            return FindById(id, trackChanges);
         }
 
         public void CreateFridgeModel(FridgeModel fridgeModel)

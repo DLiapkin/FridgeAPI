@@ -20,7 +20,7 @@ namespace Repositories
 
         public Product GetProduct(Guid id, bool trackChanges)
         {
-            return FindByCondition((Product p) => p.Id == id, trackChanges).FirstOrDefault();
+            return FindById(id, trackChanges);
         }
 
         public void CreateProduct(Product product)
