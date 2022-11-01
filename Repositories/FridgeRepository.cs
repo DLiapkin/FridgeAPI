@@ -12,30 +12,5 @@ namespace Repositories
         {
 
         }
-
-        public IEnumerable<Fridge> GetAllFridges(bool trackChanges) 
-        {
-            return FindAll(trackChanges).OrderBy(c => c.Name).ToList();
-        } 
-
-        public Fridge GetFridge(Guid id, bool trackChanges)
-        {
-            return FindById(id, trackChanges);
-        }
-
-        public void CreateFridge(Fridge fridge)
-        {
-            Create(fridge);
-        }
-
-        public void UpdateFridge(Fridge fridge)
-        {
-            Update(fridge);
-        }
-
-        public void DeleteFridge(Fridge fridge)
-        {
-            Delete(fridge);
-        }
     }
 }

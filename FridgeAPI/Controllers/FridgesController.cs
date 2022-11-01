@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
@@ -31,7 +30,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridges = _repository.Fridge.GetAllFridges(trackChanges: true);
+                var fridges = _repository.Fridge.FindAll(trackChanges: true);
                 var fridgesDto = _mapper.Map<IEnumerable<FridgeDto>>(fridges);
                 return Ok(fridgesDto);
             }
@@ -47,7 +46,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridge = _repository.Fridge.GetFridge(id, trackChanges: false);
+                var fridge = _repository.Fridge.FindById(id, trackChanges: false);
                 if (fridge == null)
                 {
                     _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
@@ -84,7 +83,7 @@ namespace FridgeAPI.Controllers
                         return UnprocessableEntity(ModelState);
                     }
                     Fridge fridge = _mapper.Map<Fridge>(fridgeDto);
-                    _repository.Fridge.CreateFridge(fridge);
+                    _repository.Fridge.Create(fridge);
                     _repository.Save();
                     var fridgeToReturn = _mapper.Map<FridgeDto>(fridge);
                     return CreatedAtAction(nameof(CreateFridge), new { id = fridgeToReturn.Id }, fridgeToReturn);
@@ -107,7 +106,7 @@ namespace FridgeAPI.Controllers
                     _logger.LogError("FridgeToUpdateDto object sent from client is null.");
                     return BadRequest("FridgeToUpdateDto object is null");
                 }
-                var fridgeEntity = _repository.Fridge.GetFridge(id, trackChanges: false);
+                var fridgeEntity = _repository.Fridge.FindById(id, trackChanges: false);
                 if (fridgeEntity == null)
                 {
                     _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
@@ -119,7 +118,7 @@ namespace FridgeAPI.Controllers
                     return UnprocessableEntity(ModelState);
                 }
                 _mapper.Map(fridge, fridgeEntity);
-                _repository.Fridge.UpdateFridge(fridgeEntity);
+                _repository.Fridge.Update(fridgeEntity);
                 _repository.Save();
                 return NoContent();
             }
@@ -135,13 +134,13 @@ namespace FridgeAPI.Controllers
         {
             try 
             {
-                var fridge = _repository.Fridge.GetFridge(id, trackChanges: false);
+                var fridge = _repository.Fridge.FindById(id, trackChanges: false);
                 if (fridge == null)
                 {
                     _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
                     return NotFound();
                 }
-                _repository.Fridge.DeleteFridge(fridge);
+                _repository.Fridge.Delete(fridge);
                 _repository.Save();
                 return NoContent();
             }
@@ -157,7 +156,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: true);
+                var fridge = _repository.Fridge.FindById(fridgeId, trackChanges: true);
                 if (fridge == null)
                 {
                     _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
@@ -184,7 +183,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: true);
+                var fridge = _repository.Fridge.FindById(fridgeId, trackChanges: true);
                 if (fridge == null)
                 {
                     _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
@@ -202,7 +201,7 @@ namespace FridgeAPI.Controllers
                 }
                 var product = _mapper.Map<FridgeProduct>(productToCreateDto);
                 product.FridgeId = fridgeId;
-                _repository.FridgeProduct.CreateFridgeProduct(product);
+                _repository.FridgeProduct.Create(product);
                 _repository.Save();
                 var productToReturn = _mapper.Map<FridgeProductDto>(product);
                 return CreatedAtAction(nameof(CreateProductForFridge), 
@@ -220,19 +219,19 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridge = _repository.Fridge.GetFridge(fridgeId, trackChanges: true);
+                var fridge = _repository.Fridge.FindById(fridgeId, trackChanges: true);
                 if (fridge == null)
                 {
                     _logger.LogInformation($"Fridge with id: {fridgeId} doesn't exist in the database.");
                     return NotFound();
                 }
-                var product = _repository.FridgeProduct.GetFridgeProduct(fridgeProductId, trackChanges: false);
+                var product = _repository.FridgeProduct.FindById(fridgeProductId, trackChanges: false);
                 if (product == null)
                 {
                     _logger.LogInformation($"There is no such a product with id: {fridgeProductId}.");
                     return NotFound();
                 }
-                _repository.FridgeProduct.DeleteFridgeProduct(product);
+                _repository.FridgeProduct.Delete(product);
                 _repository.Save();
                 return NoContent();
             }

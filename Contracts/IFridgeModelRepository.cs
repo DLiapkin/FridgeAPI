@@ -1,15 +1,9 @@
 ﻿using Entities.Models;
-using System;
-using System.Collections.Generic;
 
 namespace Contracts
 {
-    public interface IFridgeModelRepository
+    public interface IFridgeModelRepository : IRepository<FridgeModel>
     {
-        IEnumerable<FridgeModel> GetAllFridgeModels(bool trackChanges);
-        FridgeModel GetFridgeModel(Guid id, bool trackChanges);
-        void CreateFridgeModel(FridgeModel fridgeModel);
-        void UpdateFridgeModel(FridgeModel fridgeModel);
-        void DeleteFridgeModel(FridgeModel fridgeModel);
+
     }
 }
