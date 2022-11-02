@@ -34,6 +34,7 @@ namespace FridgeAPI
             services.ConfigureLoggerService();
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
+            services.ConfigureControllerServices();
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
             services.Configure<ApiBehaviorOptions>(options =>

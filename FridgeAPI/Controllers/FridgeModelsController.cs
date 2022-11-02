@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using Contracts;
+﻿using Contracts.Services;
 using Entities.DataTransferObjects;
-using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,14 +12,12 @@ namespace FridgeAPI.Controllers
     public class FridgeModelsController : ControllerBase
     {
         private readonly ILogger<FridgeModelsController> _logger;
-        private readonly IUnitOfWork _repository;
-        private readonly IMapper _mapper;
+        private readonly IFridgeModelService _service;
 
-        public FridgeModelsController(ILogger<FridgeModelsController> logger, IUnitOfWork repositoryManager, IMapper mapper)
+        public FridgeModelsController(ILogger<FridgeModelsController> logger, IFridgeModelService service)
         {
             _logger = logger;
-            _repository = repositoryManager;
-            _mapper = mapper;
+            _service = service;
         }
 
         [HttpGet]
@@ -29,8 +25,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridgeModels = _repository.FridgeModel.FindAll(trackChanges: true);
-                var fridgeModelsDto = _mapper.Map<IEnumerable<FridgeModelDto>>(fridgeModels);
+                IEnumerable<FridgeModelDto> fridgeModelsDto = _service.GetAll();
                 return Ok(fridgeModelsDto);
             }
             catch (Exception ex)
@@ -45,15 +40,14 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridgeModel = _repository.FridgeModel.FindById(id, trackChanges: false);
-                if (fridgeModel == null)
+                var fridgeModelDto = _service.GetById(id);
+                if (fridgeModelDto == null)
                 {
                     _logger.LogInformation($"FridgeModel with id: {id} doesn't exist in the database.");
                     return NotFound();
                 }
                 else
                 {
-                    var fridgeModelDto = _mapper.Map<FridgeModelDto>(fridgeModel);
                     return Ok(fridgeModelDto);
                 }
             }
@@ -81,10 +75,7 @@ namespace FridgeAPI.Controllers
                         _logger.LogError("Invalid model state for the FridgeModelToCreateDto object");
                         return UnprocessableEntity(ModelState);
                     }
-                    FridgeModel fridgeModel = _mapper.Map<FridgeModel>(fridgeModelToCreateDto);
-                    _repository.FridgeModel.Create(fridgeModel);
-                    _repository.Save();
-                    var fridgeModelToReturn = _mapper.Map<FridgeModelDto>(fridgeModel);
+                    var fridgeModelToReturn = _service.Create(fridgeModelToCreateDto);
                     return CreatedAtAction(nameof(CreateFridgeModel), new { id = fridgeModelToReturn.Id }, fridgeModelToReturn);
                 }
             }
@@ -96,29 +87,26 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateFridgeModel(Guid id, [FromBody] FridgeModelToUpdateDto fridgeModel)
+        public IActionResult UpdateFridgeModel(Guid id, [FromBody] FridgeModelToUpdateDto fridgeModelToUpdate)
         {
             try
             {
-                if (fridgeModel == null)
+                if (fridgeModelToUpdate == null)
                 {
                     _logger.LogError("FridgeModelToUpdateDto object sent from client is null.");
                     return BadRequest("FridgeModelToUpdateDto object is null");
-                }
-                var fridgeModelEntity = _repository.FridgeModel.FindById(id, trackChanges: false);
-                if (fridgeModelEntity == null)
-                {
-                    _logger.LogInformation($"FridgeModel with id: {id} doesn't exist in the database.");
-                    return NotFound();
                 }
                 if (!ModelState.IsValid)
                 {
                     _logger.LogError("Invalid model state for the FridgeModelToUpdateDto object");
                     return UnprocessableEntity(ModelState);
                 }
-                _mapper.Map(fridgeModel, fridgeModelEntity);
-                _repository.FridgeModel.Update(fridgeModelEntity);
-                _repository.Save();
+                if (_service.GetById(id) == null)
+                {
+                    _logger.LogInformation($"FridgeModel with id: {id} doesn't exist in the database.");
+                    return NotFound();
+                }
+                _service.Update(id, fridgeModelToUpdate);
                 return NoContent();
             }
             catch (Exception ex)
@@ -133,14 +121,12 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridgeModel = _repository.FridgeModel.FindById(id, trackChanges: false);
-                if (fridgeModel == null)
+                if (_service.GetById(id) == null)
                 {
                     _logger.LogInformation($"FridgeModel with id: {id} doesn't exist in the database.");
                     return NotFound();
                 }
-                _repository.FridgeModel.Delete(fridgeModel);
-                _repository.Save();
+                _service.Delete(id);
                 return NoContent();
             }
             catch (Exception ex)

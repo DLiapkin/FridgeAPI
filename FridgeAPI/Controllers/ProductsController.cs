@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using Contracts;
+﻿using Contracts.Services;
 using Entities.DataTransferObjects;
-using Entities.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,14 +12,12 @@ namespace FridgeAPI.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly ILogger<ProductsController> _logger;
-        private readonly IUnitOfWork _repository;
-        private readonly IMapper _mapper;
+        private readonly IProductService _service;
 
-        public ProductsController(ILogger<ProductsController> logger, IUnitOfWork repositoryManager, IMapper mapper)
+        public ProductsController(ILogger<ProductsController> logger, IProductService service)
         {
             _logger = logger;
-            _repository = repositoryManager;
-            _mapper = mapper;
+            _service = service;
         }
 
         [HttpGet]
@@ -30,9 +25,8 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var products = _repository.Product.FindAll(trackChanges: true);
-                var productDto = _mapper.Map<IEnumerable<ProductDto>>(products);
-                return Ok(productDto);
+                IEnumerable<ProductDto> products = _service.GetAll();
+                return Ok(products);
             }
             catch (Exception ex)
             {
@@ -46,7 +40,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var product = _repository.Product.FindById(id, trackChanges: false);
+                ProductDto product = _service.GetById(id);
                 if (product == null)
                 {
                     _logger.LogInformation($"Product with id: {id} doesn't exist in the database.");
@@ -54,8 +48,7 @@ namespace FridgeAPI.Controllers
                 }
                 else
                 {
-                    var productDto = _mapper.Map<ProductDto>(product);
-                    return Ok(productDto);
+                    return Ok(product);
                 }
             }
             catch (Exception ex)
@@ -82,10 +75,7 @@ namespace FridgeAPI.Controllers
                         _logger.LogError("Invalid model state for the ProductToCreateDto object");
                         return UnprocessableEntity(ModelState);
                     }
-                    Product product = _mapper.Map<Product>(productDto);
-                    _repository.Product.Create(product);
-                    _repository.Save();
-                    var productToReturn = _mapper.Map<ProductDto>(product);
+                    ProductDto productToReturn = _service.Create(productDto);
                     return CreatedAtAction(nameof(CreateProduct), new { id = productToReturn.Id }, productToReturn);
                 }
             }
@@ -106,20 +96,17 @@ namespace FridgeAPI.Controllers
                     _logger.LogError("ProductToUpdateDto object sent from client is null.");
                     return BadRequest("ProductToUpdateDto object is null");
                 }
-                var productEntity = _repository.Product.FindById(id, trackChanges: false);
-                if (productEntity == null)
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError("Invalid model state for the ProductToUpdateDto object");
+                    return UnprocessableEntity(ModelState);
+                }
+                if (_service.GetById(id) == null)
                 {
                     _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
                     return NotFound();
                 }
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogError("Invalid model state for the ProductToCreateDto object");
-                    return UnprocessableEntity(ModelState);
-                }
-                _mapper.Map(product, productEntity);
-                _repository.Product.Update(productEntity);
-                _repository.Save();
+                _service.Update(id, product);
                 return NoContent();
             }
             catch (Exception ex)
@@ -134,14 +121,12 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var product = _repository.Product.FindById(id, trackChanges: false);
-                if (product == null)
+                if (_service.GetById(id) == null)
                 {
                     _logger.LogInformation($"Product with id: {id} doesn't exist in the database.");
                     return NotFound();
                 }
-                _repository.Product.Delete(product);
-                _repository.Save();
+                _service.Delete(id);
                 return NoContent();
             }
             catch (Exception ex)

@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entiti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{9CBF2DCC-F184-4BF4-85CC-D887F2F7AF1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FridgeAPI.UnitTests", "FridgeAPI.UnitTests\FridgeAPI.UnitTests.csproj", "{EB370C73-1C76-4B31-8F42-58BD331083A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FridgeAPI.UnitTests", "FridgeAPI.UnitTests\FridgeAPI.UnitTests.csproj", "{EB370C73-1C76-4B31-8F42-58BD331083A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{7236C41E-1066-4CAD-B9D0-7B577FBC514B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{EB370C73-1C76-4B31-8F42-58BD331083A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB370C73-1C76-4B31-8F42-58BD331083A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB370C73-1C76-4B31-8F42-58BD331083A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7236C41E-1066-4CAD-B9D0-7B577FBC514B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7236C41E-1066-4CAD-B9D0-7B577FBC514B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7236C41E-1066-4CAD-B9D0-7B577FBC514B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7236C41E-1066-4CAD-B9D0-7B577FBC514B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

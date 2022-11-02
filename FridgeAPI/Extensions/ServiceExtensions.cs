@@ -4,6 +4,8 @@ using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Contracts.Services;
+using Services;
 
 namespace FridgeAPI.Extensions
 {
@@ -31,6 +33,13 @@ namespace FridgeAPI.Extensions
             services.AddScoped<IFridgeProductRepository, FridgeProductRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
+
+        public static void ConfigureControllerServices(this IServiceCollection services)
+        {
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IFridgeModelService, FridgeModelService>();
+            services.AddScoped<IFridgeService, FridgeService>();
         }
     }   
 }
