@@ -8,7 +8,6 @@ using FridgeAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace FridgeAPI.UnitTests
@@ -32,7 +31,7 @@ namespace FridgeAPI.UnitTests
         public void GetProductById_UnknownId_ReturnsNotFound()
         {
             // Arrange
-            repositoryStub.Setup(repo => repo.Product.GetProduct(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.Product.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Product)null);
 
             // Act
@@ -53,7 +52,7 @@ namespace FridgeAPI.UnitTests
                 Name = expected.Name,
                 DefaultQuantity = expected.DefaultQuantity,
             };
-            repositoryStub.Setup(repo => repo.Product.GetProduct(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.Product.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<ProductDto>(expected)).Returns(expectedDto);
 
@@ -75,7 +74,7 @@ namespace FridgeAPI.UnitTests
                 Name = expected.Name,
                 DefaultQuantity = expected.DefaultQuantity,
             };
-            repositoryStub.Setup(repo => repo.Product.GetProduct(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.Product.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<ProductDto>(expected)).Returns(expectedDto);
 
@@ -102,7 +101,7 @@ namespace FridgeAPI.UnitTests
                     DefaultQuantity = product.DefaultQuantity,
                 });
             }
-            repositoryStub.Setup(repo => repo.Product.GetAllProducts(It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.Product.FindAll(It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<IEnumerable<ProductDto>>(expected)).Returns(expectedDto);
 
@@ -142,7 +141,7 @@ namespace FridgeAPI.UnitTests
                 Name = product.Name,
                 DefaultQuantity = product.DefaultQuantity,
             };
-            repositoryStub.Setup(repo => repo.Product.CreateProduct(It.IsAny<Product>()));
+            repositoryStub.Setup(repo => repo.Product.Create(It.IsAny<Product>()));
             mapperStub.Setup(map => map.Map<Product>(productToCreate)).Returns(product);
             mapperStub.Setup(map => map.Map<ProductDto>(product)).Returns(productDto);
 
@@ -178,7 +177,7 @@ namespace FridgeAPI.UnitTests
                 DefaultQuantity = product.DefaultQuantity,
             };
             repositoryStub
-                .Setup(repo => repo.Product.GetProduct(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Product.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Product)null);
 
             // Act
@@ -199,9 +198,9 @@ namespace FridgeAPI.UnitTests
                 DefaultQuantity = product.DefaultQuantity,
             };
             repositoryStub
-                .Setup(repo => repo.Product.GetProduct(product.Id, It.IsAny<bool>()))
+                .Setup(repo => repo.Product.FindById(product.Id, It.IsAny<bool>()))
                 .Returns(product);
-            repositoryStub.Setup(repo => repo.Product.UpdateProduct(product));
+            repositoryStub.Setup(repo => repo.Product.Update(product));
             mapperStub.Setup(map => map.Map(product, productToUpdate));
 
             // Act
@@ -216,7 +215,7 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Product.GetProduct(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Product.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Product)null);
 
             // Act
@@ -231,9 +230,9 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Product.GetProduct(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Product.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new Product());
-            repositoryStub.Setup(repo => repo.Product.DeleteProduct(It.IsAny<Product>()));
+            repositoryStub.Setup(repo => repo.Product.Delete(It.IsAny<Product>()));
 
             // Act
             var result = controller.DeleteProduct(It.IsAny<Guid>());

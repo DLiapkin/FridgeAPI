@@ -31,7 +31,7 @@ namespace FridgeAPI.UnitTests
         public void GetFridgeModelById_UnknownId_ReturnsNotFound()
         {
             // Arrange
-            repositoryStub.Setup(repo => repo.FridgeModel.GetFridgeModel(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.FridgeModel.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((FridgeModel)null);
 
             // Act
@@ -52,7 +52,7 @@ namespace FridgeAPI.UnitTests
                 Name = expected.Name,
                 Year = expected.Year,
             };
-            repositoryStub.Setup(repo => repo.FridgeModel.GetFridgeModel(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.FridgeModel.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<FridgeModelDto>(expected)).Returns(expectedDto);
 
@@ -74,7 +74,7 @@ namespace FridgeAPI.UnitTests
                 Name = expected.Name,
                 Year = expected.Year
             };
-            repositoryStub.Setup(repo => repo.FridgeModel.GetFridgeModel(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.FridgeModel.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<FridgeModelDto>(expected)).Returns(expectedDto);
 
@@ -101,7 +101,7 @@ namespace FridgeAPI.UnitTests
                     Year = fridgeModel.Year
                 });
             }
-            repositoryStub.Setup(repo => repo.FridgeModel.GetAllFridgeModels(It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.FridgeModel.FindAll(It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<IEnumerable<FridgeModelDto>>(expected)).Returns(expectedDto);
 
@@ -141,7 +141,7 @@ namespace FridgeAPI.UnitTests
                 Name = fridgeModel.Name,
                 Year = fridgeModel.Year
             };
-            repositoryStub.Setup(repo => repo.FridgeModel.CreateFridgeModel(It.IsAny<FridgeModel>()));
+            repositoryStub.Setup(repo => repo.FridgeModel.Create(It.IsAny<FridgeModel>()));
             mapperStub.Setup(map => map.Map<FridgeModel>(FridgeModelToCreate)).Returns(fridgeModel);
             mapperStub.Setup(map => map.Map<FridgeModelDto>(fridgeModel)).Returns(fridgeModelDto);
 
@@ -177,7 +177,7 @@ namespace FridgeAPI.UnitTests
                 Year = fridgeModel.Year,
             };
             repositoryStub
-                .Setup(repo => repo.FridgeModel.GetFridgeModel(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.FridgeModel.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((FridgeModel)null);
 
             // Act
@@ -198,9 +198,9 @@ namespace FridgeAPI.UnitTests
                 Year = fridgeModel.Year,
             };
             repositoryStub
-                .Setup(repo => repo.FridgeModel.GetFridgeModel(fridgeModel.Id, It.IsAny<bool>()))
+                .Setup(repo => repo.FridgeModel.FindById(fridgeModel.Id, It.IsAny<bool>()))
                 .Returns(fridgeModel);
-            repositoryStub.Setup(repo => repo.FridgeModel.UpdateFridgeModel(fridgeModel));
+            repositoryStub.Setup(repo => repo.FridgeModel.Update(fridgeModel));
             mapperStub.Setup(map => map.Map(fridgeModel, fridgeModelToUpdate));
 
             // Act
@@ -215,7 +215,7 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.FridgeModel.GetFridgeModel(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.FridgeModel.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((FridgeModel)null);
 
             // Act
@@ -230,9 +230,9 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.FridgeModel.GetFridgeModel(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.FridgeModel.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new FridgeModel());
-            repositoryStub.Setup(repo => repo.FridgeModel.DeleteFridgeModel(It.IsAny<FridgeModel>()));
+            repositoryStub.Setup(repo => repo.FridgeModel.Delete(It.IsAny<FridgeModel>()));
 
             // Act
             var result = controller.DeleteFridgeModel(It.IsAny<Guid>());

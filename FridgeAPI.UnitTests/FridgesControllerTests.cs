@@ -8,7 +8,6 @@ using FridgeAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace FridgeAPI.UnitTests
@@ -32,7 +31,7 @@ namespace FridgeAPI.UnitTests
         public void GetFridgeById_UnknownId_ReturnsNotFound()
         {
             // Arrange
-            repositoryStub.Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Fridge)null);
 
             // Act
@@ -48,7 +47,7 @@ namespace FridgeAPI.UnitTests
             // Arrange
             Fridge expected = CreateRandomFridge();
             FridgeDto expectedDto = CreateDtoFromFridge(expected);
-            repositoryStub.Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<FridgeDto>(expected)).Returns(expectedDto);
 
@@ -65,7 +64,7 @@ namespace FridgeAPI.UnitTests
             // Arrange
             Fridge expected = CreateRandomFridge();
             FridgeDto expectedDto = CreateDtoFromFridge(expected);
-            repositoryStub.Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<FridgeDto>(expected)).Returns(expectedDto);
 
@@ -87,7 +86,7 @@ namespace FridgeAPI.UnitTests
             {
                 expectedDto.Add(CreateDtoFromFridge(fridge));
             }
-            repositoryStub.Setup(repo => repo.Fridge.GetAllFridges(It.IsAny<bool>()))
+            repositoryStub.Setup(repo => repo.Fridge.FindAll(It.IsAny<bool>()))
                 .Returns(expected);
             mapperStub.Setup(map => map.Map<IEnumerable<FridgeDto>>(expected)).Returns(expectedDto);
 
@@ -123,7 +122,7 @@ namespace FridgeAPI.UnitTests
                 ModelId = fridge.ModelId,
                 OwnerName = fridge.OwnerName,
             };
-            repositoryStub.Setup(repo => repo.Fridge.CreateFridge(It.IsAny<Fridge>()));
+            repositoryStub.Setup(repo => repo.Fridge.Create(It.IsAny<Fridge>()));
             mapperStub.Setup(map => map.Map<Fridge>(fridgeToCreate)).Returns(fridge);
             mapperStub.Setup(map => map.Map<FridgeDto>(fridge)).Returns(fridgeDto);
 
@@ -160,7 +159,7 @@ namespace FridgeAPI.UnitTests
                 OwnerName = fridge.OwnerName,
             };
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Fridge)null);
 
             // Act
@@ -182,9 +181,9 @@ namespace FridgeAPI.UnitTests
                 OwnerName = fridge.OwnerName,
             };
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(fridge.Id, It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(fridge.Id, It.IsAny<bool>()))
                 .Returns(fridge);
-            repositoryStub.Setup(repo => repo.Fridge.UpdateFridge(fridge));
+            repositoryStub.Setup(repo => repo.Fridge.Update(fridge));
             mapperStub.Setup(map => map.Map(fridge, fridgeToUpdate));
 
             // Act
@@ -199,7 +198,7 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Fridge)null);
 
             // Act
@@ -214,9 +213,9 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new Fridge());
-            repositoryStub.Setup(repo => repo.Fridge.DeleteFridge(It.IsAny<Fridge>()));
+            repositoryStub.Setup(repo => repo.Fridge.Delete(It.IsAny<Fridge>()));
 
             // Act
             var result = controller.DeleteFridge(It.IsAny<Guid>());
@@ -230,7 +229,7 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Fridge)null);
 
             // Act
@@ -247,7 +246,7 @@ namespace FridgeAPI.UnitTests
             Fridge fridge = CreateRandomFridge();
             fridge.Products = new List<FridgeProduct>();
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(fridge);
 
             // Act
@@ -276,7 +275,7 @@ namespace FridgeAPI.UnitTests
             }
             fridge.Products = products;
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(fridge);
             mapperStub.Setup(map => map.Map<IEnumerable<FridgeProductDto>>(fridge.Products)).Returns(expectedProducts);
 
@@ -293,7 +292,7 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Fridge)null);
             // Act
             var result = controller.CreateProductForFridge(It.IsAny<Guid>(), null);
@@ -307,7 +306,7 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new Fridge());
             // Act
             var result = controller.CreateProductForFridge(It.IsAny<Guid>(), null);
@@ -334,9 +333,9 @@ namespace FridgeAPI.UnitTests
                 Quantity = product.Quantity,
             };
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new Fridge());
-            repositoryStub.Setup(repo => repo.FridgeProduct.CreateFridgeProduct(It.IsAny<FridgeProduct>()));
+            repositoryStub.Setup(repo => repo.FridgeProduct.Create(It.IsAny<FridgeProduct>()));
             mapperStub.Setup(map => map.Map<FridgeProduct>(productToCreate)).Returns(product);
             mapperStub.Setup(map => map.Map<FridgeProductDto>(product)).Returns(productDto);
 
@@ -354,7 +353,7 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Fridge)null);
 
             // Act
@@ -369,10 +368,10 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new Fridge());
             repositoryStub
-                .Setup(repo => repo.FridgeProduct.GetFridgeProduct(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.FridgeProduct.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((FridgeProduct)null);
 
             // Act
@@ -387,12 +386,12 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             repositoryStub
-                .Setup(repo => repo.Fridge.GetFridge(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new Fridge());
             repositoryStub
-                .Setup(repo => repo.FridgeProduct.GetFridgeProduct(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(repo => repo.FridgeProduct.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new FridgeProduct());
-            repositoryStub.Setup(repo => repo.FridgeProduct.DeleteFridgeProduct(It.IsAny<FridgeProduct>()));
+            repositoryStub.Setup(repo => repo.FridgeProduct.Delete(It.IsAny<FridgeProduct>()));
 
             // Act
             var result = controller.DeleteProductInFridge(It.IsAny<Guid>(), It.IsAny<Guid>());
