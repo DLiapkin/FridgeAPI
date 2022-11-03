@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Contracts.Services;
 using Services;
+using Contracts.Repositries;
 
 namespace FridgeAPI.Extensions
 {

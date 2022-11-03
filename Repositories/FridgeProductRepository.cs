@@ -1,6 +1,7 @@
-﻿using Contracts;
+﻿using Contracts.Repositries;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Repositories
 {
@@ -11,9 +12,9 @@ namespace Repositories
 
         }
 
-        public void ExcecuteProcedure(string query)
+        public async Task ExcecuteProcedure(string query)
         {
-            Context.Database.ExecuteSqlRaw(query);
+            await Context.Database.ExecuteSqlRawAsync(query);
         }
     }
 }

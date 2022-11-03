@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Entities.DataTransferObjects;
 
 namespace Contracts.Services
 {
     public interface IFridgeService
     {
-        FridgeDto Create(FridgeToCreateDto fridgeToCreate);
-        IEnumerable<FridgeDto> GetAll();
-        FridgeDto GetById(Guid id);
-        void Update(Guid id, FridgeToUpdateDto fridgeToUpdate);
-        void Delete(Guid id);
+        Task<FridgeDto> Create(FridgeToCreateDto fridgeToCreate);
+        Task<IEnumerable<FridgeDto>> GetAll();
+        Task<FridgeDto> GetById(Guid id);
+        Task Update(Guid id, FridgeToUpdateDto fridgeToUpdate);
+        Task Delete(Guid id);
 
-        FridgeProductDto CreateProduct(Guid fridgeId, FridgeProductToCreateDto productToCreateDto);
-        IEnumerable<FridgeProductDto> GetProducts(Guid fridgeId);
-        FridgeProductDto GetProductById(Guid productId);
-        void DeleteProduct(Guid fridgeProductId);
-        void RefreshProduct();
+        Task<FridgeProductDto> CreateProduct(Guid fridgeId, FridgeProductToCreateDto productToCreateDto);
+        Task<IEnumerable<FridgeProductDto>> GetProducts(Guid fridgeId);
+        Task<FridgeProductDto> GetProductById(Guid productId);
+        Task DeleteProduct(Guid fridgeProductId);
+        Task RefreshProduct();
     }
 }

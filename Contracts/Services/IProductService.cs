@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Entities.DataTransferObjects;
 
 namespace Contracts.Services
 {
     public interface IProductService
     {
-        ProductDto Create(ProductToCreateDto productToCreate);
-        IEnumerable<ProductDto> GetAll();
-        ProductDto GetById(Guid id);
-        void Update(Guid id, ProductToUpdateDto productToUpdate);
-        void Delete(Guid id);
+        Task<ProductDto> Create(ProductToCreateDto productToCreate);
+        Task<IEnumerable<ProductDto>> GetAll();
+        Task<ProductDto> GetById(Guid id);
+        Task Update(Guid id, ProductToUpdateDto productToUpdate);
+        Task Delete(Guid id);
     }
 }

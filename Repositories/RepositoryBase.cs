@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Contracts;
+using System.Threading.Tasks;
+using Contracts.Repositries;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,19 +17,33 @@ namespace Repositories
             Context = repositoryContext;
         }
 
-        public IEnumerable<T> FindAll(bool trackChanges)
+        public async Task<IEnumerable<T>> FindAll(bool trackChanges)
         {
-            return !trackChanges ? Context.Set<T>().AsNoTracking() : Context.Set<T>();
+            if (trackChanges)
+            {
+                return await Context.Set<T>().ToListAsync();
+            }
+            else
+            {
+                return await Context.Set<T>().AsNoTracking().ToListAsync();
+            }
         }
 
-        public T FindById(Guid id, bool trackChanges)
+        public async Task<T> FindById(Guid id, bool trackChanges)
         {
-            return !trackChanges ? Context.Set<T>().AsNoTracking().FirstOrDefault(e => e.Id == id) : Context.Set<T>().FirstOrDefault(e => e.Id == id);
+            if (trackChanges)
+            {
+                return await Context.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
+            }
+            else
+            {
+                return await Context.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+            }
         }
 
-        public void Create(T entity) 
+        public async Task Create(T entity) 
         {
-            Context.Set<T>().Add(entity);
+            await Context.Set<T>().AddAsync(entity);
         }
 
         public void Update(T entity) 

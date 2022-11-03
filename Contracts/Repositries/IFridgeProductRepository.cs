@@ -1,9 +1,10 @@
 ﻿using Entities.Models;
+using System.Threading.Tasks;
 
-namespace Contracts
+namespace Contracts.Repositries
 {
     public interface IFridgeProductRepository : IRepository<FridgeProduct>
     {
-        void ExcecuteProcedure(string query);
+        Task ExcecuteProcedure(string query);
     }
 }

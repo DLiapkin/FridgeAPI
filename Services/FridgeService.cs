@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Contracts;
 using Contracts.Services;
 using Entities.Models;
 using Entities.DataTransferObjects;
@@ -7,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using Contracts.Repositries;
 
 namespace Services
 {
@@ -23,79 +24,79 @@ namespace Services
             _storedProc = configuration.GetSection("StoredProcedures:refreshProducts").Value;
         }
 
-        public FridgeDto Create(FridgeToCreateDto fridgeToCreate)
+        public async Task<FridgeDto> Create(FridgeToCreateDto fridgeToCreate)
         {
             Fridge fridge = _mapper.Map<Fridge>(fridgeToCreate);
-            _unitOfWork.Fridge.Create(fridge);
-            _unitOfWork.Save();
+            await _unitOfWork.Fridge.Create(fridge);
+            await _unitOfWork.Save();
             FridgeDto fridgeToReturn = _mapper.Map<FridgeDto>(fridge);
             return fridgeToReturn;
         }
 
-        public IEnumerable<FridgeDto> GetAll()
+        public async Task<IEnumerable<FridgeDto>> GetAll()
         {
-            IEnumerable<Fridge> fridges = _unitOfWork.Fridge.FindAll(trackChanges: true);
+            IEnumerable<Fridge> fridges = await _unitOfWork.Fridge.FindAll(trackChanges: true);
             IEnumerable<FridgeDto> fridgesDto = _mapper.Map<IEnumerable<FridgeDto>>(fridges);
             return fridgesDto;
         }
 
-        public FridgeDto GetById(Guid id)
+        public async Task<FridgeDto> GetById(Guid id)
         {
-            Fridge fridge = _unitOfWork.Fridge.FindById(id, trackChanges: false);
+            Fridge fridge = await _unitOfWork.Fridge.FindById(id, trackChanges: false);
             FridgeDto fridgeDto = _mapper.Map<FridgeDto>(fridge);
             return fridgeDto;
         }
 
-        public void Update(Guid id, FridgeToUpdateDto fridgeToUpdate)
+        public async Task Update(Guid id, FridgeToUpdateDto fridgeToUpdate)
         {
-            Fridge fridgeEntity = _unitOfWork.Fridge.FindById(id, trackChanges: false);
+            Fridge fridgeEntity = await _unitOfWork.Fridge.FindById(id, trackChanges: false);
             _mapper.Map(fridgeToUpdate, fridgeEntity);
             _unitOfWork.Fridge.Update(fridgeEntity);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
         }
 
-        public void Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            Fridge fridge = _unitOfWork.Fridge.FindById(id, trackChanges: false);
+            Fridge fridge = await _unitOfWork.Fridge.FindById(id, trackChanges: false);
             _unitOfWork.Fridge.Delete(fridge);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
         }
 
-        public FridgeProductDto CreateProduct(Guid fridgeId, FridgeProductToCreateDto productToCreateDto)
+        public async Task<FridgeProductDto> CreateProduct(Guid fridgeId, FridgeProductToCreateDto productToCreateDto)
         {
             FridgeProduct product = _mapper.Map<FridgeProduct>(productToCreateDto);
             product.FridgeId = fridgeId;
-            _unitOfWork.FridgeProduct.Create(product);
-            _unitOfWork.Save();
+            await _unitOfWork.FridgeProduct.Create(product);
+            await _unitOfWork.Save();
             FridgeProductDto productToReturn = _mapper.Map<FridgeProductDto>(product);
             return productToReturn;
         }
 
-        public IEnumerable<FridgeProductDto> GetProducts(Guid fridgeId)
+        public async Task<IEnumerable<FridgeProductDto>> GetProducts(Guid fridgeId)
         {
-            Fridge fridge = _unitOfWork.Fridge.FindById(fridgeId, trackChanges: true);
+            Fridge fridge = await _unitOfWork.Fridge.FindById(fridgeId, trackChanges: true);
             IEnumerable<FridgeProduct> products = fridge.Products.ToList();
             IEnumerable<FridgeProductDto> productsDto = _mapper.Map<IEnumerable<FridgeProductDto>>(products);
             return productsDto;
         }
 
-        public FridgeProductDto GetProductById(Guid productId)
+        public async Task<FridgeProductDto> GetProductById(Guid productId)
         {
-            FridgeProduct product = _unitOfWork.FridgeProduct.FindById(productId, trackChanges: false);
+            FridgeProduct product = await _unitOfWork.FridgeProduct.FindById(productId, trackChanges: false);
             FridgeProductDto productDto = _mapper.Map<FridgeProductDto>(product);
             return productDto;
         }
 
-        public void DeleteProduct(Guid fridgeProductId)
+        public async Task DeleteProduct(Guid fridgeProductId)
         {
-            FridgeProduct product = _unitOfWork.FridgeProduct.FindById(fridgeProductId, trackChanges: false);
+            FridgeProduct product = await _unitOfWork.FridgeProduct.FindById(fridgeProductId, trackChanges: false);
             _unitOfWork.FridgeProduct.Delete(product);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
         }
 
-        public void RefreshProduct()
+        public async Task RefreshProduct()
         {
-            _unitOfWork.FridgeProduct.ExcecuteProcedure(_storedProc);
+            await _unitOfWork.FridgeProduct.ExcecuteProcedure(_storedProc);
         }
     }
 }

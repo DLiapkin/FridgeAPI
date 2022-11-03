@@ -1,7 +1,6 @@
 using Moq;
 using Xunit;
 using AutoMapper;
-using Contracts;
 using Entities.Models;
 using Entities.DataTransferObjects;
 using FridgeAPI.Controllers;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using Contracts.Repositries;
 
 namespace FridgeAPI.UnitTests
 {
@@ -35,7 +35,7 @@ namespace FridgeAPI.UnitTests
                 .Returns((Fridge)null);
 
             // Act
-            var result = controller.GetFridgeById(It.IsAny<Guid>());
+            var result = controller.GetFridgeByIdAsync(It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -52,7 +52,7 @@ namespace FridgeAPI.UnitTests
             mapperStub.Setup(map => map.Map<FridgeDto>(expected)).Returns(expectedDto);
 
             // Act
-            var result = controller.GetFridgeById(It.IsAny<Guid>());
+            var result = controller.GetFridgeByIdAsync(It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -69,7 +69,7 @@ namespace FridgeAPI.UnitTests
             mapperStub.Setup(map => map.Map<FridgeDto>(expected)).Returns(expectedDto);
 
             // Act
-            var result = controller.GetFridgeById(It.IsAny<Guid>());
+            var result = controller.GetFridgeByIdAsync(It.IsAny<Guid>());
 
             // Assert
             FridgeDto dto = (FridgeDto)(result as ObjectResult).Value;
@@ -91,7 +91,7 @@ namespace FridgeAPI.UnitTests
             mapperStub.Setup(map => map.Map<IEnumerable<FridgeDto>>(expected)).Returns(expectedDto);
 
             // Act
-            var result = controller.GetFridges();
+            var result = controller.GetFridgesAsync();
 
             // Assert
             IEnumerable<FridgeDto> dto = (IEnumerable<FridgeDto>)(result as ObjectResult).Value;
@@ -104,7 +104,7 @@ namespace FridgeAPI.UnitTests
             // Arrange
 
             // Act
-            var result = controller.CreateFridge(null);
+            var result = controller.CreateFridgeAsync(null);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -127,7 +127,7 @@ namespace FridgeAPI.UnitTests
             mapperStub.Setup(map => map.Map<FridgeDto>(fridge)).Returns(fridgeDto);
 
             // Act
-            var result = controller.CreateFridge(fridgeToCreate);
+            var result = controller.CreateFridgeAsync(fridgeToCreate);
 
             // Assert
             FridgeDto createdFridge = (result as CreatedAtActionResult).Value as FridgeDto;
@@ -141,7 +141,7 @@ namespace FridgeAPI.UnitTests
             // Arrange
 
             // Act
-            var result = controller.UpdateFridge(It.IsAny<Guid>(), null);
+            var result = controller.UpdateFridgeAsync(It.IsAny<Guid>(), null);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -163,7 +163,7 @@ namespace FridgeAPI.UnitTests
                 .Returns((Fridge)null);
 
             // Act
-            var result = controller.UpdateFridge(It.IsAny<Guid>(), fridgeToUpdate);
+            var result = controller.UpdateFridgeAsync(It.IsAny<Guid>(), fridgeToUpdate);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -187,7 +187,7 @@ namespace FridgeAPI.UnitTests
             mapperStub.Setup(map => map.Map(fridge, fridgeToUpdate));
 
             // Act
-            var result = controller.UpdateFridge(fridge.Id, fridgeToUpdate);
+            var result = controller.UpdateFridgeAsync(fridge.Id, fridgeToUpdate);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -202,7 +202,7 @@ namespace FridgeAPI.UnitTests
                 .Returns((Fridge)null);
 
             // Act
-            var result = controller.DeleteFridge(It.IsAny<Guid>());
+            var result = controller.DeleteFridgeAsync(It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -218,7 +218,7 @@ namespace FridgeAPI.UnitTests
             repositoryStub.Setup(repo => repo.Fridge.Delete(It.IsAny<Fridge>()));
 
             // Act
-            var result = controller.DeleteFridge(It.IsAny<Guid>());
+            var result = controller.DeleteFridgeAsync(It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -233,7 +233,7 @@ namespace FridgeAPI.UnitTests
                 .Returns((Fridge)null);
 
             // Act
-            var result = controller.GetFridgeProductsById(It.IsAny<Guid>());
+            var result = controller.GetFridgeProductsByIdAsync(It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -250,7 +250,7 @@ namespace FridgeAPI.UnitTests
                 .Returns(fridge);
 
             // Act
-            var result = controller.GetFridgeProductsById(It.IsAny<Guid>());
+            var result = controller.GetFridgeProductsByIdAsync(It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -280,7 +280,7 @@ namespace FridgeAPI.UnitTests
             mapperStub.Setup(map => map.Map<IEnumerable<FridgeProductDto>>(fridge.Products)).Returns(expectedProducts);
 
             // Act
-            var result = controller.GetFridgeProductsById(It.IsAny<Guid>());
+            var result = controller.GetFridgeProductsByIdAsync(It.IsAny<Guid>());
 
             // Assert
             IEnumerable<FridgeProductDto> dto = (IEnumerable<FridgeProductDto>)(result as ObjectResult).Value;
@@ -295,7 +295,7 @@ namespace FridgeAPI.UnitTests
                 .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns((Fridge)null);
             // Act
-            var result = controller.CreateProductForFridge(It.IsAny<Guid>(), null);
+            var result = controller.CreateProductForFridgeAsync(It.IsAny<Guid>(), null);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -309,7 +309,7 @@ namespace FridgeAPI.UnitTests
                 .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Returns(new Fridge());
             // Act
-            var result = controller.CreateProductForFridge(It.IsAny<Guid>(), null);
+            var result = controller.CreateProductForFridgeAsync(It.IsAny<Guid>(), null);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -340,7 +340,7 @@ namespace FridgeAPI.UnitTests
             mapperStub.Setup(map => map.Map<FridgeProductDto>(product)).Returns(productDto);
 
             // Act
-            var result = controller.CreateProductForFridge(It.IsAny<Guid>(), productToCreate);
+            var result = controller.CreateProductForFridgeAsync(It.IsAny<Guid>(), productToCreate);
 
             // Assert
             FridgeProductDto createdProduct = (result as CreatedAtActionResult).Value as FridgeProductDto;
@@ -357,7 +357,7 @@ namespace FridgeAPI.UnitTests
                 .Returns((Fridge)null);
 
             // Act
-            var result = controller.DeleteProductInFridge(It.IsAny<Guid>(), It.IsAny<Guid>());
+            var result = controller.DeleteProductInFridgeAsync(It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -375,7 +375,7 @@ namespace FridgeAPI.UnitTests
                 .Returns((FridgeProduct)null);
 
             // Act
-            var result = controller.DeleteProductInFridge(It.IsAny<Guid>(), It.IsAny<Guid>());
+            var result = controller.DeleteProductInFridgeAsync(It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -394,7 +394,7 @@ namespace FridgeAPI.UnitTests
             repositoryStub.Setup(repo => repo.FridgeProduct.Delete(It.IsAny<FridgeProduct>()));
 
             // Act
-            var result = controller.DeleteProductInFridge(It.IsAny<Guid>(), It.IsAny<Guid>());
+            var result = controller.DeleteProductInFridgeAsync(It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NoContentResult>(result);

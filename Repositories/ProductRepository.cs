@@ -1,5 +1,6 @@
-﻿using Contracts;
+﻿using Contracts.Repositries;
 using Entities.Models;
+
 namespace Repositories
 {
     public class ProductRepository : RepositoryBase<Product>, IProductRepository

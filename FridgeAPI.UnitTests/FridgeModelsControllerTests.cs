@@ -1,7 +1,6 @@
 ﻿using Moq;
 using Xunit;
 using AutoMapper;
-using Contracts;
 using Entities.Models;
 using Entities.DataTransferObjects;
 using FridgeAPI.Controllers;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using Contracts.Repositries;
 
 namespace FridgeAPI.UnitTests
 {
@@ -219,7 +219,7 @@ namespace FridgeAPI.UnitTests
                 .Returns((FridgeModel)null);
 
             // Act
-            var result = controller.DeleteFridgeModel(It.IsAny<Guid>());
+            var result = controller.DeleteFridgeModelAsync(It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -235,7 +235,7 @@ namespace FridgeAPI.UnitTests
             repositoryStub.Setup(repo => repo.FridgeModel.Delete(It.IsAny<FridgeModel>()));
 
             // Act
-            var result = controller.DeleteFridgeModel(It.IsAny<Guid>());
+            var result = controller.DeleteFridgeModelAsync(It.IsAny<Guid>());
 
             // Assert
             Assert.IsType<NoContentResult>(result);

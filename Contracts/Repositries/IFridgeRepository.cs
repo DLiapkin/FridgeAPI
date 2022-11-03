@@ -1,6 +1,6 @@
 ﻿using Entities.Models;
 
-namespace Contracts
+namespace Contracts.Repositries
 {
     public interface IFridgeRepository : IRepository<Fridge>
     {

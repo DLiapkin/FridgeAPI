@@ -1,7 +1,6 @@
 ﻿using Moq;
 using Xunit;
 using AutoMapper;
-using Contracts;
 using Entities.Models;
 using Entities.DataTransferObjects;
 using FridgeAPI.Controllers;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using Contracts.Repositries;
 
 namespace FridgeAPI.UnitTests
 {

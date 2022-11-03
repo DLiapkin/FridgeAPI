@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FridgeAPI.Controllers
 {
@@ -21,11 +22,11 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetFridgeModels()
+        public async Task<IActionResult> GetFridgeModels()
         {
             try
             {
-                IEnumerable<FridgeModelDto> fridgeModelsDto = _service.GetAll();
+                IEnumerable<FridgeModelDto> fridgeModelsDto = await _service.GetAll();
                 return Ok(fridgeModelsDto);
             }
             catch (Exception ex)
@@ -36,11 +37,11 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetFridgeModelById(Guid id)
+        public async Task<IActionResult> GetFridgeModelById(Guid id)
         {
             try
             {
-                var fridgeModelDto = _service.GetById(id);
+                var fridgeModelDto = await _service.GetById(id);
                 if (fridgeModelDto == null)
                 {
                     _logger.LogInformation($"FridgeModel with id: {id} doesn't exist in the database.");
@@ -59,7 +60,7 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateFridgeModel([FromBody] FridgeModelToCreateDto fridgeModelToCreateDto)
+        public async Task<IActionResult> CreateFridgeModel([FromBody] FridgeModelToCreateDto fridgeModelToCreateDto)
         {
             try
             {
@@ -75,7 +76,7 @@ namespace FridgeAPI.Controllers
                         _logger.LogError("Invalid model state for the FridgeModelToCreateDto object");
                         return UnprocessableEntity(ModelState);
                     }
-                    var fridgeModelToReturn = _service.Create(fridgeModelToCreateDto);
+                    FridgeModelDto fridgeModelToReturn = await _service.Create(fridgeModelToCreateDto);
                     return CreatedAtAction(nameof(CreateFridgeModel), new { id = fridgeModelToReturn.Id }, fridgeModelToReturn);
                 }
             }
@@ -87,7 +88,7 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateFridgeModel(Guid id, [FromBody] FridgeModelToUpdateDto fridgeModelToUpdate)
+        public async Task<IActionResult> UpdateFridgeModel(Guid id, [FromBody] FridgeModelToUpdateDto fridgeModelToUpdate)
         {
             try
             {
@@ -101,12 +102,12 @@ namespace FridgeAPI.Controllers
                     _logger.LogError("Invalid model state for the FridgeModelToUpdateDto object");
                     return UnprocessableEntity(ModelState);
                 }
-                if (_service.GetById(id) == null)
+                if (await _service.GetById(id) == null)
                 {
                     _logger.LogInformation($"FridgeModel with id: {id} doesn't exist in the database.");
                     return NotFound();
                 }
-                _service.Update(id, fridgeModelToUpdate);
+                await _service.Update(id, fridgeModelToUpdate);
                 return NoContent();
             }
             catch (Exception ex)
@@ -117,16 +118,16 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteFridgeModel(Guid id)
+        public async Task<IActionResult> DeleteFridgeModel(Guid id)
         {
             try
             {
-                if (_service.GetById(id) == null)
+                if (await _service.GetById(id) == null)
                 {
                     _logger.LogInformation($"FridgeModel with id: {id} doesn't exist in the database.");
                     return NotFound();
                 }
-                _service.Delete(id);
+                await _service.Delete(id);
                 return NoContent();
             }
             catch (Exception ex)

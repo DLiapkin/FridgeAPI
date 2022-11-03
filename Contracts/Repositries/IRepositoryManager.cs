@@ -1,4 +1,6 @@
-﻿namespace Contracts
+﻿using System.Threading.Tasks;
+
+namespace Contracts.Repositries
 {
     public interface IUnitOfWork
     {
@@ -6,6 +8,6 @@
         IFridgeRepository Fridge { get; }
         IFridgeProductRepository FridgeProduct { get; }
         IProductRepository Product { get; }
-        void Save();
+        Task Save();
     }
 }
