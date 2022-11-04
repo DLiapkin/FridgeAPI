@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Entities.Models;
-using Entities.DataTransferObjects;
+using Services.Models;
 
 namespace FridgeAPI.Extensions
 {
@@ -8,22 +8,19 @@ namespace FridgeAPI.Extensions
     {
         public MapperProfile()
         {
-            CreateMap<Fridge, FridgeDto>();
-            CreateMap<FridgeToCreateDto, Fridge>();
-            CreateMap<FridgeToUpdateDto, Fridge>();
+            CreateMap<Fridge, FridgeResponse>();
+            CreateMap<FridgeRequest, Fridge>();
 
-            CreateMap<Product, ProductDto>();
-            CreateMap<ProductToCreateDto, Product>();
-            CreateMap<ProductToUpdateDto, Product>();
+            CreateMap<Product, ProductResponse>();
+            CreateMap<ProductRequest, Product>();
 
-            CreateMap<FridgeProduct, FridgeProductDto>()
+            CreateMap<FridgeProduct, FridgeProductResponse>()
                 .ForMember(fm => fm.ProductName,
                 opt => opt.MapFrom(x => x.Product.Name));
-            CreateMap<FridgeProductToCreateDto, FridgeProduct>();
+            CreateMap<FridgeProductRequest, FridgeProduct>();
 
-            CreateMap<FridgeModel, FridgeModelDto>();
-            CreateMap<FridgeModelToCreateDto, FridgeModel>();
-            CreateMap<FridgeModelToUpdateDto, FridgeModel>();
+            CreateMap<FridgeModel, FridgeModelResponse>();
+            CreateMap<FridgeModelRequest, FridgeModel>();
         }
     }
 }

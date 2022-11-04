@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Contracts.Services;
 using Entities.Models;
-using Entities.DataTransferObjects;
+using Services.Models;
+using Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,30 +20,30 @@ namespace Services
             _mapper = mapper;
         }
 
-        public async Task<FridgeModelDto> Create(FridgeModelToCreateDto fridgeModelToCreate)
+        public async Task<FridgeModelResponse> Create(FridgeModelRequest fridgeModelToCreate)
         {
             FridgeModel fridgeModel = _mapper.Map<FridgeModel>(fridgeModelToCreate);
             await _unitOfWork.FridgeModel.Create(fridgeModel);
             await _unitOfWork.Save();
-            FridgeModelDto fridgeModelToReturn = _mapper.Map<FridgeModelDto>(fridgeModel);
+            FridgeModelResponse fridgeModelToReturn = _mapper.Map<FridgeModelResponse>(fridgeModel);
             return fridgeModelToReturn;
         }
 
-        public async Task<IEnumerable<FridgeModelDto>> GetAll()
+        public async Task<IEnumerable<FridgeModelResponse>> GetAll()
         {
             IEnumerable<FridgeModel> fridgeModels = await _unitOfWork.FridgeModel.FindAll(trackChanges: true);
-            IEnumerable<FridgeModelDto> fridgeModelsDto = _mapper.Map<IEnumerable<FridgeModelDto>>(fridgeModels);
+            IEnumerable<FridgeModelResponse> fridgeModelsDto = _mapper.Map<IEnumerable<FridgeModelResponse>>(fridgeModels);
             return fridgeModelsDto;
         }
 
-        public async Task<FridgeModelDto> GetById(Guid id)
+        public async Task<FridgeModelResponse> GetById(Guid id)
         {
             FridgeModel fridgeModel = await _unitOfWork.FridgeModel.FindById(id, trackChanges: false);
-            FridgeModelDto fridgeModelDto = _mapper.Map<FridgeModelDto>(fridgeModel);
+            FridgeModelResponse fridgeModelDto = _mapper.Map<FridgeModelResponse>(fridgeModel);
             return fridgeModelDto;
         }
 
-        public async Task Update(Guid id, FridgeModelToUpdateDto fridgeModelToUpdate)
+        public async Task Update(Guid id, FridgeModelRequest fridgeModelToUpdate)
         {
             FridgeModel fridgeModelEntity = await _unitOfWork.FridgeModel.FindById(id, trackChanges: false);
             _mapper.Map(fridgeModelToUpdate, fridgeModelEntity);

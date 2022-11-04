@@ -1,5 +1,5 @@
-﻿using Contracts.Services;
-using Entities.DataTransferObjects;
+﻿using Services.Contracts;
+using Services.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,7 +26,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                IEnumerable<ProductDto> products = await _service.GetAll();
+                IEnumerable<ProductResponse> products = await _service.GetAll();
                 return Ok(products);
             }
             catch (Exception ex)
@@ -41,7 +41,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                ProductDto product = await _service.GetById(id);
+                ProductResponse product = await _service.GetById(id);
                 if (product == null)
                 {
                     _logger.LogInformation($"Product with id: {id} doesn't exist in the database.");
@@ -60,23 +60,23 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] ProductToCreateDto productDto)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductRequest productToCreate)
         {
             try
             {
-                if (productDto == null)
+                if (productToCreate == null)
                 {
-                    _logger.LogError("ProductToCreateDto object sent from client is null.");
-                    return BadRequest("ProductToCreateDto is null");
+                    _logger.LogError("ProductRequest object sent from client is null.");
+                    return BadRequest("ProductRequest is null");
                 }
                 else
                 {
                     if (!ModelState.IsValid)
                     {
-                        _logger.LogError("Invalid model state for the ProductToCreateDto object");
+                        _logger.LogError("Invalid model state for the ProductRequest object");
                         return UnprocessableEntity(ModelState);
                     }
-                    ProductDto productToReturn = await _service.Create(productDto);
+                    ProductResponse productToReturn = await _service.Create(productToCreate);
                     return CreatedAtAction(nameof(CreateProduct), new { id = productToReturn.Id }, productToReturn);
                 }
             }
@@ -88,26 +88,26 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ProductToUpdateDto product)
+        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ProductRequest productToUpdate)
         {
             try
             {
-                if (product == null)
+                if (productToUpdate == null)
                 {
-                    _logger.LogError("ProductToUpdateDto object sent from client is null.");
-                    return BadRequest("ProductToUpdateDto object is null");
+                    _logger.LogError("ProductRequest object sent from client is null.");
+                    return BadRequest("ProductRequest object is null");
                 }
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError("Invalid model state for the ProductToUpdateDto object");
+                    _logger.LogError("Invalid model state for the ProductRequest object");
                     return UnprocessableEntity(ModelState);
                 }
                 if (await _service.GetById(id) == null)
                 {
-                    _logger.LogInformation($"Fridge with id: {id} doesn't exist in the database.");
+                    _logger.LogInformation($"Product with id: {id} doesn't exist in the database.");
                     return NotFound();
                 }
-                await _service.Update(id, product);
+                await _service.Update(id, productToUpdate);
                 return NoContent();
             }
             catch (Exception ex)

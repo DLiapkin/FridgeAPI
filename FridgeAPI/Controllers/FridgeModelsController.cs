@@ -1,5 +1,5 @@
-﻿using Contracts.Services;
-using Entities.DataTransferObjects;
+﻿using Services.Contracts;
+using Services.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,7 +26,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                IEnumerable<FridgeModelDto> fridgeModelsDto = await _service.GetAll();
+                IEnumerable<FridgeModelResponse> fridgeModelsDto = await _service.GetAll();
                 return Ok(fridgeModelsDto);
             }
             catch (Exception ex)
@@ -41,7 +41,7 @@ namespace FridgeAPI.Controllers
         {
             try
             {
-                var fridgeModelDto = await _service.GetById(id);
+                FridgeModelResponse fridgeModelDto = await _service.GetById(id);
                 if (fridgeModelDto == null)
                 {
                     _logger.LogInformation($"FridgeModel with id: {id} doesn't exist in the database.");
@@ -60,23 +60,23 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFridgeModel([FromBody] FridgeModelToCreateDto fridgeModelToCreateDto)
+        public async Task<IActionResult> CreateFridgeModel([FromBody] FridgeModelRequest fridgeModelToCreate)
         {
             try
             {
-                if (fridgeModelToCreateDto == null)
+                if (fridgeModelToCreate == null)
                 {
-                    _logger.LogError("FridgeModelToCreateDto object sent from client is null.");
-                    return BadRequest("FridgeModelToCreateDto is null");
+                    _logger.LogError("FridgeModelRequest object sent from client is null.");
+                    return BadRequest("FridgeModelRequest is null");
                 }
                 else
                 {
                     if (!ModelState.IsValid)
                     {
-                        _logger.LogError("Invalid model state for the FridgeModelToCreateDto object");
+                        _logger.LogError("Invalid model state for the FridgeModelRequest object");
                         return UnprocessableEntity(ModelState);
                     }
-                    FridgeModelDto fridgeModelToReturn = await _service.Create(fridgeModelToCreateDto);
+                    FridgeModelResponse fridgeModelToReturn = await _service.Create(fridgeModelToCreate);
                     return CreatedAtAction(nameof(CreateFridgeModel), new { id = fridgeModelToReturn.Id }, fridgeModelToReturn);
                 }
             }
@@ -88,18 +88,18 @@ namespace FridgeAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateFridgeModel(Guid id, [FromBody] FridgeModelToUpdateDto fridgeModelToUpdate)
+        public async Task<IActionResult> UpdateFridgeModel(Guid id, [FromBody] FridgeModelRequest fridgeModelToUpdate)
         {
             try
             {
                 if (fridgeModelToUpdate == null)
                 {
-                    _logger.LogError("FridgeModelToUpdateDto object sent from client is null.");
-                    return BadRequest("FridgeModelToUpdateDto object is null");
+                    _logger.LogError("FridgeModelRequest object sent from client is null.");
+                    return BadRequest("FridgeModelRequest object is null");
                 }
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError("Invalid model state for the FridgeModelToUpdateDto object");
+                    _logger.LogError("Invalid model state for the FridgeModelRequest object");
                     return UnprocessableEntity(ModelState);
                 }
                 if (await _service.GetById(id) == null)

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Contracts.Services;
+using Services.Models;
+using Services.Contracts;
 using Entities.Models;
-using Entities.DataTransferObjects;
 using AutoMapper;
 using Contracts.Repositries;
 
@@ -20,30 +20,30 @@ namespace Services
             _mapper = mapper;
         }
 
-        public async Task<ProductDto> Create(ProductToCreateDto productToCreate)
+        public async Task<ProductResponse> Create(ProductRequest productToCreate)
         {
             Product product = _mapper.Map<Product>(productToCreate);
             await _unitOfWork.Product.Create(product);
             await _unitOfWork.Save();
-            ProductDto productToReturn = _mapper.Map<ProductDto>(product);
+            ProductResponse productToReturn = _mapper.Map<ProductResponse>(product);
             return productToReturn;
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAll()
+        public async Task<IEnumerable<ProductResponse>> GetAll()
         {
             IEnumerable<Product> products = await _unitOfWork.Product.FindAll(trackChanges: true);
-            IEnumerable<ProductDto> productDto = _mapper.Map<IEnumerable<ProductDto>>(products);
+            IEnumerable<ProductResponse> productDto = _mapper.Map<IEnumerable<ProductResponse>>(products);
             return productDto;
         }
 
-        public async Task<ProductDto> GetById(Guid id)
+        public async Task<ProductResponse> GetById(Guid id)
         {
             Product product = await _unitOfWork.Product.FindById(id, trackChanges: false);
-            ProductDto productDto = _mapper.Map<ProductDto>(product);
+            ProductResponse productDto = _mapper.Map<ProductResponse>(product);
             return productDto;
         }
 
-        public async Task Update(Guid id, ProductToUpdateDto productToUpdate)
+        public async Task Update(Guid id, ProductRequest productToUpdate)
         {
             Product productEntity = await _unitOfWork.Product.FindById(id, trackChanges: false);
             _mapper.Map(productToUpdate, productEntity);

@@ -4,7 +4,7 @@ using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Contracts.Services;
+using Services.Contracts;
 using Services;
 using Contracts.Repositries;
 
