@@ -1,12 +1,11 @@
-﻿using Contracts;
-using Repositories;
-using LoggerService;
+﻿using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Services.Contracts;
 using Services;
-using Contracts.Repositries;
+using Services.Contracts;
+using Domain.Contracts;
+using Domain.Repositories;
 
 namespace FridgeAPI.Extensions
 {

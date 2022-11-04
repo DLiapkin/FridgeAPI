@@ -1,44 +1,42 @@
 using Moq;
 using Xunit;
 using AutoMapper;
-using Entities.Models;
-using Entities.DataTransferObjects;
+using Domain.Models;
+using Services.Contracts;
+using Services.Models;
 using FridgeAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using Contracts.Repositries;
+using System.Linq;
 
 namespace FridgeAPI.UnitTests
 {
     public class FridgesControllerTests
     {
-        private readonly Mock<IUnitOfWork> repositoryStub;
         private readonly Mock<ILogger<FridgesController>> loggerStub;
-        private readonly Mock<IMapper> mapperStub;
+        private readonly Mock<IFridgeService> serviceStub;
         private readonly FridgesController controller;
 
         public FridgesControllerTests()
         {
-            repositoryStub = new Mock<IUnitOfWork>();
             loggerStub = new Mock<ILogger<FridgesController>>();
-            mapperStub = new Mock<IMapper>();
-            controller = new FridgesController(loggerStub.Object, repositoryStub.Object, mapperStub.Object);
+            serviceStub = new Mock<IFridgeService>();
+            controller = new FridgesController(loggerStub.Object, serviceStub.Object);
         }
 
         [Fact]
         public void GetFridgeById_UnknownId_ReturnsNotFound()
         {
             // Arrange
-            repositoryStub.Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns((Fridge)null);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync((FridgeResponse)null);
 
             // Act
-            var result = controller.GetFridgeByIdAsync(It.IsAny<Guid>());
+            var result = controller.GetFridgeById(It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
@@ -46,16 +44,14 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             Fridge expected = CreateRandomFridge();
-            FridgeDto expectedDto = CreateDtoFromFridge(expected);
-            repositoryStub.Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(expected);
-            mapperStub.Setup(map => map.Map<FridgeDto>(expected)).Returns(expectedDto);
+            FridgeResponse expectedDto = CreateDtoFromFridge(expected);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(expectedDto);
 
             // Act
-            var result = controller.GetFridgeByIdAsync(It.IsAny<Guid>());
+            var result = controller.GetFridgeById(It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<OkObjectResult>(result.Result);
         }
 
         [Fact]
@@ -63,16 +59,14 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             Fridge expected = CreateRandomFridge();
-            FridgeDto expectedDto = CreateDtoFromFridge(expected);
-            repositoryStub.Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(expected);
-            mapperStub.Setup(map => map.Map<FridgeDto>(expected)).Returns(expectedDto);
+            FridgeResponse expectedDto = CreateDtoFromFridge(expected);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(expectedDto);
 
             // Act
-            var result = controller.GetFridgeByIdAsync(It.IsAny<Guid>());
+            var result = controller.GetFridgeById(It.IsAny<Guid>());
 
             // Assert
-            FridgeDto dto = (FridgeDto)(result as ObjectResult).Value;
+            FridgeResponse dto = (FridgeResponse)(result.Result as OkObjectResult).Value;
             Assert.Equal(expectedDto, dto);
         }
 
@@ -81,20 +75,18 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             IEnumerable<Fridge> expected = new[] { CreateRandomFridge(), CreateRandomFridge(), CreateRandomFridge() };
-            List<FridgeDto> expectedDto = new List<FridgeDto>();
+            List<FridgeResponse> expectedDto = new List<FridgeResponse>();
             foreach(var fridge in expected)
             {
                 expectedDto.Add(CreateDtoFromFridge(fridge));
             }
-            repositoryStub.Setup(repo => repo.Fridge.FindAll(It.IsAny<bool>()))
-                .Returns(expected);
-            mapperStub.Setup(map => map.Map<IEnumerable<FridgeDto>>(expected)).Returns(expectedDto);
+            serviceStub.Setup(serv => serv.GetAll()).ReturnsAsync(expectedDto);
 
             // Act
-            var result = controller.GetFridgesAsync();
+            var result = controller.GetFridges();
 
             // Assert
-            IEnumerable<FridgeDto> dto = (IEnumerable<FridgeDto>)(result as ObjectResult).Value;
+            IEnumerable<FridgeResponse> dto = (IEnumerable<FridgeResponse>)(result.Result as OkObjectResult).Value;
             Assert.Equal(expectedDto, dto);
         }
 
@@ -104,10 +96,10 @@ namespace FridgeAPI.UnitTests
             // Arrange
 
             // Act
-            var result = controller.CreateFridgeAsync(null);
+            var result = controller.CreateFridge(null);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
         [Fact]
@@ -115,22 +107,20 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             Fridge fridge = CreateRandomFridge();
-            FridgeDto fridgeDto = CreateDtoFromFridge(fridge);
-            FridgeToCreateDto fridgeToCreate = new FridgeToCreateDto()
+            FridgeResponse fridgeDto = CreateDtoFromFridge(fridge);
+            FridgeRequest fridgeToCreate = new FridgeRequest()
             {
                 Name = fridge.Name,
                 ModelId = fridge.ModelId,
                 OwnerName = fridge.OwnerName,
             };
-            repositoryStub.Setup(repo => repo.Fridge.Create(It.IsAny<Fridge>()));
-            mapperStub.Setup(map => map.Map<Fridge>(fridgeToCreate)).Returns(fridge);
-            mapperStub.Setup(map => map.Map<FridgeDto>(fridge)).Returns(fridgeDto);
+            serviceStub.Setup(serv => serv.Create(It.IsAny<FridgeRequest>())).ReturnsAsync(fridgeDto);
 
             // Act
-            var result = controller.CreateFridgeAsync(fridgeToCreate);
+            var result = controller.CreateFridge(fridgeToCreate);
 
             // Assert
-            FridgeDto createdFridge = (result as CreatedAtActionResult).Value as FridgeDto;
+            FridgeResponse createdFridge = (FridgeResponse)(result.Result as CreatedAtActionResult).Value;
             Assert.Equal(fridgeDto, createdFridge);
             Assert.NotEqual(createdFridge.Id, Guid.Empty);
         }
@@ -141,10 +131,10 @@ namespace FridgeAPI.UnitTests
             // Arrange
 
             // Act
-            var result = controller.UpdateFridgeAsync(It.IsAny<Guid>(), null);
+            var result = controller.UpdateFridge(It.IsAny<Guid>(), null);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
         [Fact]
@@ -152,21 +142,19 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             Fridge fridge = CreateRandomFridge();
-            FridgeToUpdateDto fridgeToUpdate = new FridgeToUpdateDto()
+            FridgeRequest fridgeToUpdate = new FridgeRequest()
             {
                 Name = fridge.Name,
                 ModelId = fridge.ModelId,
                 OwnerName = fridge.OwnerName,
             };
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns((Fridge)null);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync((FridgeResponse)null);
 
             // Act
-            var result = controller.UpdateFridgeAsync(It.IsAny<Guid>(), fridgeToUpdate);
+            var result = controller.UpdateFridge(It.IsAny<Guid>(), fridgeToUpdate);
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
@@ -174,86 +162,78 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             Fridge fridge = CreateRandomFridge();
-            FridgeToUpdateDto fridgeToUpdate = new FridgeToUpdateDto()
+            FridgeRequest fridgeToUpdate = new FridgeRequest()
             {
                 Name = fridge.Name + fridge.ModelId.ToString(),
                 ModelId = fridge.ModelId,
                 OwnerName = fridge.OwnerName,
             };
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(fridge.Id, It.IsAny<bool>()))
-                .Returns(fridge);
-            repositoryStub.Setup(repo => repo.Fridge.Update(fridge));
-            mapperStub.Setup(map => map.Map(fridge, fridgeToUpdate));
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(new FridgeResponse());
+            serviceStub.Setup(serv => serv.Update(It.IsAny<Guid>(), fridgeToUpdate));
 
             // Act
-            var result = controller.UpdateFridgeAsync(fridge.Id, fridgeToUpdate);
+            var result = controller.UpdateFridge(fridge.Id, fridgeToUpdate);
 
             // Assert
-            Assert.IsType<NoContentResult>(result);
+            Assert.IsType<NoContentResult>(result.Result);
         }
 
         [Fact]
         public void DeleteFridge_WithUnknownFridge_ReturnsNotFound()
         {
             // Arrange
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns((Fridge)null);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync((FridgeResponse)null);
 
             // Act
-            var result = controller.DeleteFridgeAsync(It.IsAny<Guid>());
+            var result = controller.DeleteFridge(It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
         public void DeleteFridge_WithExistingFridge_ReturnsNoContent()
         {
             // Arrange
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(new Fridge());
-            repositoryStub.Setup(repo => repo.Fridge.Delete(It.IsAny<Fridge>()));
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(new FridgeResponse());
+            serviceStub.Setup(serv => serv.Delete(It.IsAny<Guid>()));
 
             // Act
-            var result = controller.DeleteFridgeAsync(It.IsAny<Guid>());
+            var result = controller.DeleteFridge(It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<NoContentResult>(result);
+            Assert.IsType<NoContentResult>(result.Result);
         }
 
         [Fact]
         public void GetFridgeProductsById_WithUnknownFridge_ReturnsNotFound()
         {
             // Arrange
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns((Fridge)null);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync((FridgeResponse)null);
 
             // Act
-            var result = controller.GetFridgeProductsByIdAsync(It.IsAny<Guid>());
+            var result = controller.GetFridgeProductsById(It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
-        public void GetFridgeProductsById_WithEmptyProducts_ReturnsNotFound()
+        public void GetFridgeProductsById_WithEmptyProducts_ReturnsEmptyEnumerable()
         {
             // Arrange
             Fridge fridge = CreateRandomFridge();
             fridge.Products = new List<FridgeProduct>();
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(fridge);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(CreateDtoFromFridge(fridge));
+            serviceStub.Setup(serv => serv.GetProducts(It.IsAny<Guid>()))
+                .ReturnsAsync(Enumerable.Empty<FridgeProductResponse>);
 
             // Act
-            var result = controller.GetFridgeProductsByIdAsync(It.IsAny<Guid>());
+            var result = controller.GetFridgeProductsById(It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            IEnumerable<FridgeProductResponse> products = (IEnumerable<FridgeProductResponse>)(result.Result as OkObjectResult).Value;
+            Assert.Empty(products);
         }
 
         [Fact]
@@ -262,10 +242,10 @@ namespace FridgeAPI.UnitTests
             // Arrange
             Fridge fridge = CreateRandomFridge();
             ICollection<FridgeProduct> products = new[] { CreateRandomFridgeProduct(), CreateRandomFridgeProduct() };
-            List<FridgeProductDto> expectedProducts = new List<FridgeProductDto>();
+            List<FridgeProductResponse> expectedProducts = new List<FridgeProductResponse>();
             foreach(var product in products)
             {
-                expectedProducts.Add(new FridgeProductDto() 
+                expectedProducts.Add(new FridgeProductResponse() 
                 { 
                     Id = product.Id,
                     ProductName = Guid.NewGuid().ToString(),
@@ -274,16 +254,14 @@ namespace FridgeAPI.UnitTests
                 });
             }
             fridge.Products = products;
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(fridge);
-            mapperStub.Setup(map => map.Map<IEnumerable<FridgeProductDto>>(fridge.Products)).Returns(expectedProducts);
+            serviceStub.Setup(repo => repo.GetById(It.IsAny<Guid>())).ReturnsAsync(CreateDtoFromFridge(fridge));
+            serviceStub.Setup(serv => serv.GetProducts(It.IsAny<Guid>())).ReturnsAsync(expectedProducts);
 
             // Act
-            var result = controller.GetFridgeProductsByIdAsync(It.IsAny<Guid>());
+            var result = controller.GetFridgeProductsById(It.IsAny<Guid>());
 
             // Assert
-            IEnumerable<FridgeProductDto> dto = (IEnumerable<FridgeProductDto>)(result as ObjectResult).Value;
+            List<FridgeProductResponse> dto = (List<FridgeProductResponse>)(result.Result as OkObjectResult).Value;
             Assert.Equal(expectedProducts, dto);
         }
 
@@ -291,28 +269,24 @@ namespace FridgeAPI.UnitTests
         public void CreateProductForFridge_WithUnknownFridge_ReturnsBadRequest()
         {
             // Arrange
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns((Fridge)null);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync((FridgeResponse)null);
             // Act
-            var result = controller.CreateProductForFridgeAsync(It.IsAny<Guid>(), null);
+            var result = controller.CreateProductForFridge(It.IsAny<Guid>(), null);
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
         public void CreateProductForFridge_WithNullDto_ReturnsBadRequest()
         {
             // Arrange
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(new Fridge());
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(new FridgeResponse());
             // Act
-            var result = controller.CreateProductForFridgeAsync(It.IsAny<Guid>(), null);
+            var result = controller.CreateProductForFridge(It.IsAny<Guid>(), null);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
         [Fact]
@@ -320,30 +294,27 @@ namespace FridgeAPI.UnitTests
         {
             // Arrange
             FridgeProduct product = CreateRandomFridgeProduct();
-            FridgeProductDto productDto = new FridgeProductDto()
+            FridgeProductResponse productDto = new FridgeProductResponse()
             {
                 Id = product.Id,
                 ProductName = Guid.NewGuid().ToString(),
                 ProductId = product.ProductId,
                 Quantity = product.Quantity,
             };
-            FridgeProductToCreateDto productToCreate = new FridgeProductToCreateDto()
+            FridgeProductRequest productToCreate = new FridgeProductRequest()
             {
                 ProductId = product.Id,
                 Quantity = product.Quantity,
             };
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(new Fridge());
-            repositoryStub.Setup(repo => repo.FridgeProduct.Create(It.IsAny<FridgeProduct>()));
-            mapperStub.Setup(map => map.Map<FridgeProduct>(productToCreate)).Returns(product);
-            mapperStub.Setup(map => map.Map<FridgeProductDto>(product)).Returns(productDto);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(new FridgeResponse());
+            serviceStub.Setup(serv => serv.CreateProduct(It.IsAny<Guid>(), It.IsAny<FridgeProductRequest>()))
+                .ReturnsAsync(productDto);
 
             // Act
-            var result = controller.CreateProductForFridgeAsync(It.IsAny<Guid>(), productToCreate);
+            var result = controller.CreateProductForFridge(It.IsAny<Guid>(), productToCreate);
 
             // Assert
-            FridgeProductDto createdProduct = (result as CreatedAtActionResult).Value as FridgeProductDto;
+            FridgeProductResponse createdProduct = (FridgeProductResponse)(result.Result as CreatedAtActionResult).Value;
             Assert.Equal(productDto, createdProduct);
             Assert.NotEqual(createdProduct.Id, Guid.Empty);
         }
@@ -352,52 +323,42 @@ namespace FridgeAPI.UnitTests
         public void DeleteProductInFridge_WithUnknownFridge_ReturnsNotFound()
         {
             // Arrange
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns((Fridge)null);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync((FridgeResponse)null);
 
             // Act
-            var result = controller.DeleteProductInFridgeAsync(It.IsAny<Guid>(), It.IsAny<Guid>());
+            var result = controller.DeleteProductInFridge(It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
         public void DeleteProductInFridge_WithUnknownProduct_ReturnsNotFound()
         {
             // Arrange
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(new Fridge());
-            repositoryStub
-                .Setup(repo => repo.FridgeProduct.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns((FridgeProduct)null);
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(new FridgeResponse());
+            serviceStub.Setup(serv => serv.GetProductById(It.IsAny<Guid>())).ReturnsAsync((FridgeProductResponse)null);
 
             // Act
-            var result = controller.DeleteProductInFridgeAsync(It.IsAny<Guid>(), It.IsAny<Guid>());
+            var result = controller.DeleteProductInFridge(It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
         public void DeleteProductInFridge_WithExistingFridgeAndProduct_ReturnsNoContent()
         {
             // Arrange
-            repositoryStub
-                .Setup(repo => repo.Fridge.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(new Fridge());
-            repositoryStub
-                .Setup(repo => repo.FridgeProduct.FindById(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Returns(new FridgeProduct());
-            repositoryStub.Setup(repo => repo.FridgeProduct.Delete(It.IsAny<FridgeProduct>()));
+            serviceStub.Setup(serv => serv.GetById(It.IsAny<Guid>())).ReturnsAsync(new FridgeResponse());
+            serviceStub.Setup(serv => serv.GetProductById(It.IsAny<Guid>())).ReturnsAsync(new FridgeProductResponse());
+            serviceStub.Setup(serv => serv.DeleteProduct(It.IsAny<Guid>()));
 
             // Act
-            var result = controller.DeleteProductInFridgeAsync(It.IsAny<Guid>(), It.IsAny<Guid>());
+            var result = controller.DeleteProductInFridge(It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
-            Assert.IsType<NoContentResult>(result);
+            Assert.IsType<NoContentResult>(result.Result);
         }
 
         private Fridge CreateRandomFridge()
@@ -411,7 +372,7 @@ namespace FridgeAPI.UnitTests
             };
         }
 
-        private FridgeDto CreateDtoFromFridge(Fridge fridge)
+        private FridgeResponse CreateDtoFromFridge(Fridge fridge)
         {
             return new()
             {

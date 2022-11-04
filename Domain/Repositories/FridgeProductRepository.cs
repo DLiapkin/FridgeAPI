@@ -1,9 +1,9 @@
-﻿using Contracts.Repositries;
-using Entities.Models;
+﻿using Domain.Contracts;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace Repositories
+namespace Domain.Repositories
 {
     public class FridgeProductRepository : RepositoryBase<FridgeProduct>, IFridgeProductRepository
     {

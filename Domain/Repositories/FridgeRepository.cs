@@ -1,7 +1,7 @@
-﻿using Contracts.Repositries;
-using Entities.Models;
+﻿using Domain.Contracts;
+using Domain.Models;
 
-namespace Repositories
+namespace Domain.Repositories
 {
     public class FridgeRepository : RepositoryBase<Fridge>, IFridgeRepository
     {

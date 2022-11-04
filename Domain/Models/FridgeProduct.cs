@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Entities.Models
+namespace Domain.Models
 {
     public class FridgeProduct : BaseEntity
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Services.Models;
 using Services.Contracts;
-using Entities.Models;
+using Domain.Models;
+using Domain.Contracts;
 using AutoMapper;
-using Contracts.Repositries;
 
 namespace Services
 {

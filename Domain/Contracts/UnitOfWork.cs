@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Contracts.Repositries
+namespace Domain.Contracts
 {
     public interface IUnitOfWork
     {

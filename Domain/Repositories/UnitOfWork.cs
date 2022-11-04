@@ -1,7 +1,7 @@
-﻿using Contracts.Repositries;
+﻿using Domain.Contracts;
 using System.Threading.Tasks;
 
-namespace Repositories
+namespace Domain.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {

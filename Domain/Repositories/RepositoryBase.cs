@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Contracts.Repositries;
-using Entities.Models;
+using Domain.Contracts;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Repositories
+namespace Domain.Repositories
 {
     public abstract class RepositoryBase<T> : IRepository<T> where T : BaseEntity
     {

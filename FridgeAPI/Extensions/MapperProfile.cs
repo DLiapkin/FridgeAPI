@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Entities.Models;
+using Domain.Models;
 using Services.Models;
 
 namespace FridgeAPI.Extensions

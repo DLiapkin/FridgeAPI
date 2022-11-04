@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Entities.DataTransferObjects
+namespace Domain.Models
 {
-    public class FridgeModelDto
+    public class FridgeModel : BaseEntity
     {
-        [Required]
-        public Guid Id { get; set; }
         [Required]
         public string Name { get; set; }
         public int Year { get; set; }
+
+        public virtual ICollection<Fridge> Fridges { get; set; }
     }
 }

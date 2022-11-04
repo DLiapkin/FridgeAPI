@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Entities.Models;
+using Domain.Models;
+using Domain.Contracts;
 using Services.Models;
 using Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Contracts.Repositries;
 
 namespace Services
 {

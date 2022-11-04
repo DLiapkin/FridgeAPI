@@ -1,7 +1,7 @@
-﻿using Entities.Models;
+﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Repositories
+namespace Domain.Repositories
 {
     public class DataContext : DbContext
     {

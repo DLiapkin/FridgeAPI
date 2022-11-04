@@ -1,6 +1,6 @@
-﻿using Entities.Models;
+﻿using Domain.Models;
 
-namespace Contracts.Repositries
+namespace Domain.Contracts
 {
     public interface IFridgeModelRepository : IRepository<FridgeModel>
     {
